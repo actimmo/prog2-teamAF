@@ -1,0 +1,6 @@
+com\teamAF\app\HomeController.class
+com\teamAF\app\models\Movie.class
+com\teamAF\app\FhmdbApplication.class
+com\teamAF\app\ui\MovieCell.class
+module-info.class
+com\teamAF\app\App.class
