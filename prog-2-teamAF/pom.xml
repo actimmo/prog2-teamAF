@@ -54,6 +54,13 @@
       <artifactId>jfoenix</artifactId>
       <version>9.0.10</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20210307</version>
+    </dependency>
+
   </dependencies>
 
   <build>
