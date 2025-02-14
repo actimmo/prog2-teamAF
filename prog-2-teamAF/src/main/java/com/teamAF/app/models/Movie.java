@@ -45,6 +45,12 @@ public class Movie {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String title = jsonObject.getString("title");
                 String desc = jsonObject.getString("description");
+                JSONArray genresArray = jsonObject.getJSONArray("genres");
+                List<String> genres = new ArrayList<>();
+                for (int j = 0; j < genresArray.length(); j++) {
+                    genres.add(genresArray.getString(j));
+                }
+                // TODO Botan: add more properties here
                 Movie movie = new Movie(title, desc);
                 movies.add(movie);
             }
