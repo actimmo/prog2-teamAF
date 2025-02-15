@@ -4,10 +4,6 @@ import com.teamAF.app.FhmdbApplication;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,11 +15,12 @@ import java.util.List;
 public class Movie {
     private String title;
     private String description;
-    // TODO add more properties here
+    private List<String> genres;
 
-    public Movie(String title, String description) {
+    public Movie(String title, String description, List<String> genres) {
         this.title = title;
         this.description = description;
+        this.genres = genres;
     }
 
     public String getTitle() {
@@ -32,6 +29,23 @@ public class Movie {
 
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Getter for the genres list
+     * @return a string representation of the genres list, separated by commas
+     * e.g. "Action, Adventure, Comedy"
+     * */
+    public String getGenres() {
+        StringBuilder sb = new StringBuilder();
+        String[] genresArray = genres.toArray(new String[0]);
+        for (int j = 0; j < genresArray.length; j++) {
+            sb.append(genresArray[j]);
+            if (j < genresArray.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 
     public static List<Movie> initializeMovies(){
@@ -50,8 +64,7 @@ public class Movie {
                 for (int j = 0; j < genresArray.length(); j++) {
                     genres.add(genresArray.getString(j));
                 }
-                // TODO Botan: add more properties here
-                Movie movie = new Movie(title, desc);
+                Movie movie = new Movie(title, desc, genres);
                 movies.add(movie);
             }
 
