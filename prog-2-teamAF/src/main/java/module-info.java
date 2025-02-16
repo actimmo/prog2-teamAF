@@ -4,6 +4,7 @@ module com.teamAF.app {
 
     requires com.jfoenix;
     requires org.json;
+    requires java.desktop;
 
     opens com.teamAF.app to javafx.fxml;
     exports com.teamAF.app;
