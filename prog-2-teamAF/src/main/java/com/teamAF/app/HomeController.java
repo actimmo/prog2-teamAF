@@ -42,13 +42,24 @@ public class HomeController implements Initializable {
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
+        // TODO add genre filter items with genreComboBox.getItems().addAll(...)
         // TODO add an option for no genre
+
         genreComboBox.setPromptText("Filter by Genre");
         ArrayList<String> genres = new ArrayList<>(Arrays.asList("ACTION", "ADVENTURE", "ANIMATION", "BIOGRAPHY", "COMEDY", "CRIME", "DRAMA", "DOCUMENTARY", "FAMILY", "FANTASY", "HISTORY", "HORROR", "MUSICAL", "MYSTERY", "ROMANCE", "SCIENCE_FICTION", "SPORT", "THRILLER", "WAR", "WESTERN" ));
         genreComboBox.getItems().addAll(genres);
 
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
+
+//        // Sort button example:
+//        sortBtn.setOnAction(actionEvent -> {
+//            if(sortBtn.getText().equals("Sort (asc)")) {
+//                // TODO sort observableMovies ascending
+//                sortBtn.setText("Sort (desc)");
+//            } else {
+//                // TODO sort observableMovies descending
+//                sortBtn.setText("Sort (asc)");
 
     }
 
