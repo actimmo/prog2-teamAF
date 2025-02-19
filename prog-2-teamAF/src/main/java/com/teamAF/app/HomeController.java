@@ -43,7 +43,7 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
 
-        // initialize UI stuff
+        // initialize UI
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
@@ -114,7 +114,11 @@ public class HomeController implements Initializable {
     }
 
     public void filterMovies(List<String> selectedGenre, String searchQuery) {
-        observableMovies.clear();
+        for (Movie m : allMovies) {
+            System.out.println(m.getTitle());
+        }
+
+        System.out.println("filterMovies called with " + selectedGenre + ", '" + searchQuery + "'");
 
         Set<String> seenTitles = new HashSet<>();
         List<Movie> filteredMovies = new ArrayList<>();
@@ -133,7 +137,13 @@ public class HomeController implements Initializable {
                 filteredMovies.add(movie);
             }
         }
+        observableMovies.clear();
         observableMovies.addAll(filteredMovies);
+
+        for (Movie m : filteredMovies) {
+            System.out.println(m.getTitle());
+        }
+
     }
 
     public ObservableList<Movie> getObservableMovies() {
@@ -153,6 +163,7 @@ public class HomeController implements Initializable {
 
     @FXML
     private void handleSearch(ActionEvent event) {
+        System.out.println(searchField.getText());
         filterMovies(selectedGenres, searchField.getText());
     }
 
