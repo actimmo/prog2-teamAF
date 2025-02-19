@@ -4,12 +4,14 @@ import com.jfoenix.controls.*;
 import com.teamAF.app.models.Movie;
 import com.teamAF.app.ui.MovieCell;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import org.controlsfx.control.CheckComboBox;
 
 import java.net.URL;
 import java.util.*;
@@ -25,7 +27,7 @@ public class HomeController implements Initializable {
     public JFXListView<Movie> movieListView;
 
     @FXML
-    public JFXComboBox<String> genreComboBox;
+    CheckComboBox<String> genreCheckComboBox;
 
     @FXML
     public JFXButton sortBtn;
@@ -41,38 +43,39 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        observableMovies.addAll(allMovies);         // add dummy data to observable list
+        // 1) Initialize the observableMovies with allMovies
+        observableMovies.addAll(allMovies);
+        movieListView.setItems(observableMovies);
+        movieListView.setCellFactory(listView -> new MovieCell());
 
-        // initialize UI
-        movieListView.setItems(observableMovies);   // set data of observable list to list view
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
+        // 2) Populate the CheckComboBox with genre items
+        ArrayList<String> genres = new ArrayList<>(Arrays.asList(
+                "ACTION", "ADVENTURE", "ANIMATION", "BIOGRAPHY", "COMEDY", "CRIME",
+                "DRAMA", "DOCUMENTARY", "FAMILY", "FANTASY", "HISTORY", "HORROR",
+                "MUSICAL", "MYSTERY", "ROMANCE", "SCIENCE_FICTION", "SPORT",
+                "THRILLER", "WAR", "WESTERN"
+        ));
+        genreCheckComboBox.getItems().addAll(genres);
+        genreCheckComboBox.setTitle("Filter by Genre");
 
-        // TODO add genre filter items with genreComboBox.getItems().addAll(...)
-        // TODO add an option for no genre
-
-        genreComboBox.setPromptText("Filter by Genre");
-        ArrayList<String> genres = new ArrayList<>(Arrays.asList("Select a genre", "ACTION", "ADVENTURE", "ANIMATION",
-                "BIOGRAPHY", "COMEDY", "CRIME", "DRAMA", "DOCUMENTARY", "FAMILY", "FANTASY", "HISTORY", "HORROR",
-                "MUSICAL", "MYSTERY", "ROMANCE", "SCIENCE_FICTION", "SPORT", "THRILLER", "WAR", "WESTERN"));
-
-        genreComboBox.setItems(FXCollections.observableArrayList(genres));
-        genreComboBox.getSelectionModel().select(0);
-
-        genreComboBox.setOnAction(event -> {
-            if(genreComboBox.getSelectionModel().getSelectedIndex()==0) return;
-            String selectedGenre = genreComboBox.getSelectionModel().getSelectedItem();
-
-            if (selectedGenres.contains(selectedGenre)) {
-                selectedGenres.remove(selectedGenre);
-            } else {
-                selectedGenres.add(selectedGenre);
-            }
+        // 3) Listen for changes in the “checked” genres
+        genreCheckComboBox.getCheckModel().getCheckedItems().addListener((ListChangeListener<String>) c -> {
+            selectedGenres.clear();
+            selectedGenres.addAll(genreCheckComboBox.getCheckModel().getCheckedItems());
             updateSelectedGenresLabel();
-            EventHandler<ActionEvent> eh=genreComboBox.getOnAction();
-            genreComboBox.setOnAction ( null );
-            genreComboBox.getSelectionModel().select(0);
-            genreComboBox.setOnAction ( eh );
+            // Trigger filtering immediately, if desired:
+            filterMovies(selectedGenres, searchField.getText());
+        });
 
+        // 4) Handle sort button
+        sortBtn.setOnAction(actionEvent -> {
+            if (sortBtn.getText().equals("Sort (asc)")) {
+                sortBtn.setText("Sort (desc)");
+                sortMoviesAscending();
+            } else {
+                sortBtn.setText("Sort (asc)");
+                sortMoviesDescending();
+            }
         });
 
         sortBtn.setOnAction(actionEvent -> {
