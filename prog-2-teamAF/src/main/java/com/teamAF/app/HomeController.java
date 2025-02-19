@@ -78,37 +78,30 @@ public class HomeController implements Initializable {
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
 
-        // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
-
-                // TODO sort observableMovies ascending
                 sortBtn.setText("Sort (desc)");
+                sortMoviesAscending();
             } else {
-                // TODO sort observableMovies descending
                 sortBtn.setText("Sort (asc)");
-
+                sortMoviesDescending();
             }
         });
     }
 
     public void sortMoviesAscending() {
-        // Sortiere Liste in asc. Reihenfolge nach Titel
         FXCollections.sort(observableMovies, new Comparator<Movie>() {
             @Override
             public int compare(Movie movie1, Movie movie2) {
-                // Vergleiche Titel normaler Reihenfolge (asc.)
                 return movie1.getTitle().compareToIgnoreCase(movie2.getTitle());
             }
         });
     }
 
     public void sortMoviesDescending() {
-        // Sortiere Liste in desc. Reihenfolge nach Titel
         FXCollections.sort(observableMovies, new Comparator<Movie>() {
             @Override
             public int compare(Movie movie1, Movie movie2) {
-                // Vergleiche Titel in umgekehrter Reihenfolge (desc.)
                 return movie2.getTitle().compareToIgnoreCase(movie1.getTitle());
             }
         });
@@ -121,32 +114,25 @@ public class HomeController implements Initializable {
     }
 
     public void filterMovies(List<String> selectedGenre, String searchQuery) {
-        // ObservableList leeren
         observableMovies.clear();
 
-        // Set mit gefundenen Titeln, um Duplikate zu vermeiden
         Set<String> seenTitles = new HashSet<>();
         List<Movie> filteredMovies = new ArrayList<>();
 
-        // Iteriere über alle Filme in der Liste
         for (Movie movie : allMovies) {
-            // Überprüfe, ob Film Genre entspricht
             boolean matchesGenre = selectedGenre == null || selectedGenre.isEmpty() || selectedGenre.get(0).isEmpty();
 
             for (int i=0;i< movie.getGenreList().size()&&(!matchesGenre);i++) {
                 matchesGenre = selectedGenre.contains(movie.getGenreList().get(i));
             }
 
-            // Überprüfe, ob Film Suchbegriff entspricht
             boolean matchesQuery = searchQuery == null || searchQuery.isEmpty() || movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())
                     || (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
 
-            // Wenn Film dem Genre und Suchbegriff entspricht und nicht in Liste, füge hinzu
             if (matchesGenre && matchesQuery && seenTitles.add(movie.getTitle().toLowerCase())) {
                 filteredMovies.add(movie);
             }
         }
-
         observableMovies.addAll(filteredMovies);
     }
 
@@ -159,7 +145,7 @@ public class HomeController implements Initializable {
     }
 
     private void updateSelectedGenresLabel() {
-        if (selectedGenres.size()==0)
+        if (selectedGenres.isEmpty())
             selectedGenresLabel.setText("Selected Genres: ");
         else
          selectedGenresLabel.setText("Selected Genres: " + String.join(", ", selectedGenres));
