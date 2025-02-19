@@ -1,6 +1,6 @@
-package com.teamAF.app.ui;
+package com.teamAF.app.View;
 
-import com.teamAF.app.models.Movie;
+import com.teamAF.app.Model.Movie;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;

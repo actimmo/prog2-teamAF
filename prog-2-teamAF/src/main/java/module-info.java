@@ -7,4 +7,6 @@ module com.teamAF.app {
 
     opens com.teamAF.app to javafx.fxml;
     exports com.teamAF.app;
+    exports com.teamAF.app.Controller;
+    opens com.teamAF.app.Controller to javafx.fxml;
 }

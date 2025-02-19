@@ -12,7 +12,7 @@
 
 <?import javafx.scene.control.ComboBox?>
 <?import org.controlsfx.control.CheckComboBox?>
-<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.HomeController">
+<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.Controller.HomeController">
    <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="347.0" spacing="20.0" style="-fx-background-color: black;">
       <padding>
          <Insets bottom="7.0" left="10.0" top="7.0" />
