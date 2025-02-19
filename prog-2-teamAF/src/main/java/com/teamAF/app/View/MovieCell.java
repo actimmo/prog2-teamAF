@@ -1,6 +1,6 @@
-package com.teamAF.app.ui;
+package com.teamAF.app.View;
 
-import com.teamAF.app.models.Movie;
+import com.teamAF.app.Model.Movie;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -23,6 +23,7 @@ public class MovieCell extends ListCell<Movie> {
 
         if (empty || movie == null) {
             setText(null);
+            setGraphic(null);
         } else {
             this.getStyleClass().add("movie-cell");
             title.setText(movie.getTitle());

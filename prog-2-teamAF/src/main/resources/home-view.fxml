@@ -11,7 +11,8 @@
 <?import javafx.scene.text.Font?>
 
 <?import javafx.scene.control.ComboBox?>
-<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.HomeController">
+<?import org.controlsfx.control.CheckComboBox?>
+<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.Controller.HomeController">
    <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="347.0" spacing="20.0" style="-fx-background-color: black;">
       <padding>
          <Insets bottom="7.0" left="10.0" top="7.0" />
@@ -32,9 +33,9 @@
       <children>
          <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)" />
          <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb" />
-         <JFXComboBox fx:id="genreComboBox" focusColor="#f5c518" styleClass="filter-combo-box" stylesheets="@styles.css" />
+         <CheckComboBox fx:id="genreCheckComboBox" styleClass="filter-combo-box" stylesheets="@styles.css" />
 
-         <JFXButton fx:id="searchBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
+         <JFXButton fx:id="searchBtn" onAction="#handleSearch" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
          <Label fx:id="selectedGenresLabel" styleClass="text-white" stylesheets="@styles.css" text="Selected Genres:"/>
       </children>
       <VBox.margin>

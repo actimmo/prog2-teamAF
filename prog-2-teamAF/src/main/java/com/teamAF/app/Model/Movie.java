@@ -1,4 +1,4 @@
-package com.teamAF.app.models;
+package com.teamAF.app.Model;
 
 import com.teamAF.app.FhmdbApplication;
 import org.json.JSONArray;
