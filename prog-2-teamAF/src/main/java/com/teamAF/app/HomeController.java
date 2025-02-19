@@ -51,7 +51,9 @@ public class HomeController implements Initializable {
         // TODO add an option for no genre
 
         genreComboBox.setPromptText("Filter by Genre");
-        ArrayList<String> genres = new ArrayList<>(Arrays.asList("Select a genre", "ACTION", "ADVENTURE", "ANIMATION", "BIOGRAPHY", "COMEDY", "CRIME", "DRAMA", "DOCUMENTARY", "FAMILY", "FANTASY", "HISTORY", "HORROR", "MUSICAL", "MYSTERY", "ROMANCE", "SCIENCE_FICTION", "SPORT", "THRILLER", "WAR", "WESTERN"));
+        ArrayList<String> genres = new ArrayList<>(Arrays.asList("Select a genre", "ACTION", "ADVENTURE", "ANIMATION",
+                "BIOGRAPHY", "COMEDY", "CRIME", "DRAMA", "DOCUMENTARY", "FAMILY", "FANTASY", "HISTORY", "HORROR",
+                "MUSICAL", "MYSTERY", "ROMANCE", "SCIENCE_FICTION", "SPORT", "THRILLER", "WAR", "WESTERN"));
 
         genreComboBox.setItems(FXCollections.observableArrayList(genres));
         genreComboBox.getSelectionModel().select(0);
@@ -161,6 +163,11 @@ public class HomeController implements Initializable {
             selectedGenresLabel.setText("Selected Genres: ");
         else
          selectedGenresLabel.setText("Selected Genres: " + String.join(", ", selectedGenres));
+    }
+
+    @FXML
+    private void handleSearch(ActionEvent event) {
+        filterMovies(selectedGenres, searchField.getText());
     }
 
 
