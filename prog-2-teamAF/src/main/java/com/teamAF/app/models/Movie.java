@@ -48,6 +48,10 @@ public class Movie {
         return sb.toString();
     }
 
+    public List<String> getGenreList() {
+        return genres;
+    };
+
     public static List<Movie> initializeMovies(){
         List<Movie> movies = new ArrayList<>();
         try{

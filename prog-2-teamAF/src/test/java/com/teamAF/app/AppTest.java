@@ -50,69 +50,78 @@ public class AppTest {
     }
 
     @Test
-    void searchQuery_withMatchingTitle() {
-        homeController.searchQuery("Matrix");
+    void filterMovies_withMatchingTitle() {
+        homeController.filterMovies("", "Matrix");
         assertEquals(1, homeController.getObservableMovies().size());
         assertEquals("The Matrix", homeController.getObservableMovies().get(0).getTitle());
     }
 
     @Test
-    void searchQuery_withMatchingDescription() {
-        homeController.searchQuery("hacker");
+    void filterMovies_withMatchingDescription() {
+        homeController.filterMovies("", "hacker");
         assertEquals(1, homeController.getObservableMovies().size());
         assertEquals("The Matrix", homeController.getObservableMovies().get(0).getTitle());
     }
 
     @Test
-    void searchQuery_withPartialMatch() {
-        homeController.searchQuery("Dark");
+    void filterMovies_withPartialMatch() {
+        homeController.filterMovies("", "Dark");
         assertEquals(1, homeController.getObservableMovies().size());
         assertEquals("The Dark Knight", homeController.getObservableMovies().get(0).getTitle());
     }
 
     @Test
-    void searchQuery_withNoMatch() {
-        homeController.searchQuery("Nonexistent");
+    void filterMovies_withNoMatch() {
+        homeController.filterMovies("", "Nonexistent");
         assertEquals(0, homeController.getObservableMovies().size());
     }
 
     @Test
-    void searchQuery_withEmptyQuery() {
-        homeController.searchQuery("");
+    void filterMovies_withEmptyQuery() {
+        homeController.filterMovies("", "");
         assertEquals(5, homeController.getObservableMovies().size());
     }
 
     @Test
-    void filterMoviesByGenre_withMatchingGenreAndQuery() {
-        homeController.filterMoviesByGenre("SCIENCE_FICTION", "Matrix");
+    void filterMovies_withMatchingGenreAndQuery() {
+        homeController.filterMovies("SCIENCE_FICTION", "Matrix");
         assertEquals(1, homeController.getObservableMovies().size());
         assertEquals("The Matrix", homeController.getObservableMovies().get(0).getTitle());
     }
 
     @Test
-    void filterMoviesByGenre_withNoMatchingGenreAndQuery() {
-        homeController.filterMoviesByGenre("COMEDY", "Matrix");
+    void filterMovies_withNoMatchingGenreAndQuery() {
+        homeController.filterMovies("COMEDY", "Matrix");
         assertEquals(0, homeController.getObservableMovies().size());
     }
 
     @Test
-    void filterMoviesByGenre_withMatchingGenreOnly() {
-        homeController.filterMoviesByGenre("SCIENCE_FICTION", "");
+    void filterMovies_withMatchingGenreOnly() {
+        homeController.filterMovies("SCIENCE_FICTION", "");
         assertEquals(2, homeController.getObservableMovies().size());
         assertEquals("Inception", homeController.getObservableMovies().get(0).getTitle());
         assertEquals("The Matrix", homeController.getObservableMovies().get(1).getTitle());
     }
 
     @Test
-    void filterMoviesByGenre_withMatchingQueryOnly() {
-        homeController.filterMoviesByGenre(null, "Matrix");
+    void filterMovies_withMatchingQueryOnly() {
+        homeController.filterMovies("", "Matrix");
         assertEquals(1, homeController.getObservableMovies().size());
         assertEquals("The Matrix", homeController.getObservableMovies().get(0).getTitle());
     }
 
     @Test
-    void filterMoviesByGenre_withEmptyGenreAndQuery() {
-        homeController.filterMoviesByGenre(null, "");
+    void filterMovies_withEmptyGenreAndQuery() {
+        homeController.filterMovies("", "");
         assertEquals(5, homeController.getObservableMovies().size());
+    }
+
+    @Test
+    void filterMovies_with2Genres() {
+        homeController.filterMovies(Arrays.stream(new String[]{"SCIENCE_FICTION","ACTION"}).toList(), "");
+        assertEquals(3, homeController.getObservableMovies().size());
+        assertEquals("Inception", homeController.getObservableMovies().get(0).getTitle());
+        assertEquals("The Dark Knight", homeController.getObservableMovies().get(1).getTitle());
+        assertEquals("The Matrix", homeController.getObservableMovies().get(2).getTitle());
     }
 }
