@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AppTest {
 
-    private HomeController homeController;
     private MovieService movieService;
     private List<Movie> allMovies;
 
@@ -33,16 +32,12 @@ public class AppTest {
                 new Movie("The Matrix", "A computer hacker learns about reality",
                         Arrays.asList("SCIENCE_FICTION", "ACTION"))
         );
-
         movieService = new MovieService(allMovies);
-        homeController = new HomeController(movieService);
-        homeController.initialize(null, null);
     }
 
     @Test
     void sortMoviesAscending() {
-        homeController.sortMoviesAscending();
-        ObservableList<Movie> sortedMovies = homeController.getObservableMovies();
+        List<Movie> sortedMovies = movieService.sortMoviesAscending(allMovies);
 
         assertEquals("Forrest Gump",  sortedMovies.get(0).getTitle());
         assertEquals("Inception",     sortedMovies.get(1).getTitle());
@@ -53,8 +48,7 @@ public class AppTest {
 
     @Test
     void sortMoviesDescending() {
-        homeController.sortMoviesDescending();
-        ObservableList<Movie> sortedMovies = homeController.getObservableMovies();
+        List<Movie> sortedMovies = movieService.sortMoviesDescending(allMovies);
 
         assertEquals("The Matrix",    sortedMovies.get(0).getTitle());
         assertEquals("The Godfather", sortedMovies.get(1).getTitle());
@@ -65,88 +59,94 @@ public class AppTest {
 
     @Test
     void filterMovies_withMatchingTitle() {
-        homeController.filterMovies(Collections.emptyList(), "Matrix");
+        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Matrix");
 
-        assertEquals(1, homeController.getObservableMovies().size());
-        assertEquals("The Matrix", homeController.getObservableMovies().get(0).getTitle());
+        assertEquals(1, filtered.size());
+        assertEquals("The Matrix", filtered.get(0).getTitle());
     }
 
     @Test
     void filterMovies_withMatchingDescription() {
-        homeController.filterMovies(Collections.emptyList(), "hacker");
+        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "hacker");
 
-        assertEquals(1, homeController.getObservableMovies().size());
-        assertEquals("The Matrix", homeController.getObservableMovies().get(0).getTitle());
+        assertEquals(1, filtered.size());
+        assertEquals("The Matrix", filtered.get(0).getTitle());
     }
 
     @Test
     void filterMovies_withPartialMatch() {
-        homeController.filterMovies(Collections.emptyList(), "Dark");
+        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Dark");
 
-        assertEquals(1, homeController.getObservableMovies().size());
-        assertEquals("The Dark Knight", homeController.getObservableMovies().get(0).getTitle());
+        assertEquals(1, filtered.size());
+        assertEquals("The Dark Knight", filtered.get(0).getTitle());
     }
 
     @Test
     void filterMovies_withNoMatch() {
-        homeController.filterMovies(Collections.emptyList(), "Nonexistent");
+        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "nonexistant");
 
-        assertEquals(0, homeController.getObservableMovies().size());
+        assertEquals(0, filtered.size());
     }
 
     @Test
     void filterMovies_withEmptyQuery() {
-        homeController.filterMovies(Collections.emptyList(), "");
+        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "");
 
-        assertEquals(5, homeController.getObservableMovies().size());
+        assertEquals(5, filtered.size());
     }
 
     @Test
     void filterMovies_withMatchingGenreAndQuery() {
-        homeController.filterMovies(Arrays.asList("SCIENCE_FICTION"), "Matrix");
+        List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION"), "Matrix");
 
-        assertEquals(1, homeController.getObservableMovies().size());
-        assertEquals("The Matrix", homeController.getObservableMovies().get(0).getTitle());
+        assertEquals(1, filtered.size());
+        assertEquals("The Matrix", filtered.get(0).getTitle());
     }
 
     @Test
     void filterMovies_withNoMatchingGenreAndQuery() {
-        homeController.filterMovies(Arrays.asList("COMEDY"), "Matrix");
+        List<Movie> filtered = movieService.filterMovies(List.of("COMEDY"), "Matrix");
 
-        assertEquals(0, homeController.getObservableMovies().size());
+        assertEquals(0, filtered.size());
     }
 
     @Test
     void filterMovies_withMatchingGenreOnly() {
-        homeController.filterMovies(Arrays.asList("SCIENCE_FICTION"), "");
+        List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION"), "");
 
         // In the test data, that should match "Inception" and "The Matrix"
-        assertEquals(2, homeController.getObservableMovies().size());
-        assertEquals("Inception", homeController.getObservableMovies().get(0).getTitle());
-        assertEquals("The Matrix", homeController.getObservableMovies().get(1).getTitle());
+        assertEquals(2, filtered.size());
+        assertEquals("Inception", filtered.get(0).getTitle());
+        assertEquals("The Matrix", filtered.get(1).getTitle());
     }
 
     @Test
     void filterMovies_withMatchingQueryOnly() {
-        homeController.filterMovies(Collections.emptyList(), "Matrix");
+        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Matrix");
 
-        assertEquals(1, homeController.getObservableMovies().size());
-        assertEquals("The Matrix", homeController.getObservableMovies().get(0).getTitle());
+        assertEquals(1, filtered.size());
+        assertEquals("The Matrix", filtered.get(0).getTitle());
     }
 
     @Test
     void filterMovies_withEmptyGenreAndQuery() {
-        homeController.filterMovies(Collections.emptyList(), "");
+        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "");
 
-        assertEquals(5, homeController.getObservableMovies().size());
+        assertEquals(5, filtered.size());
     }
 
     @Test
     void filterMovies_with2Genres() {
-        homeController.filterMovies(Arrays.asList("SCIENCE_FICTION", "ACTION"), "");
-        assertEquals(3, homeController.getObservableMovies().size());
-        assertEquals("Inception", homeController.getObservableMovies().get(0).getTitle());
-        assertEquals("The Dark Knight", homeController.getObservableMovies().get(1).getTitle());
-        assertEquals("The Matrix", homeController.getObservableMovies().get(2).getTitle());
-}
+        List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION", "ACTION"), "");
+        assertEquals(3, filtered.size());
+        assertEquals("Inception", filtered.get(0).getTitle());
+        assertEquals("The Dark Knight", filtered.get(1).getTitle());
+        assertEquals("The Matrix", filtered.get(2).getTitle());
+    }
+
+    @Test
+    void filterMovies_withNoMatchingGenreAndEmptyQuery() {
+        List<Movie> filtered = movieService.filterMovies(List.of("ANIMATION"), "");
+        assertEquals(0, filtered.size());
+    }
 }
