@@ -1,8 +1,6 @@
 package com.teamAF.app.Model;
 
 import com.teamAF.app.FhmdbApplication;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
