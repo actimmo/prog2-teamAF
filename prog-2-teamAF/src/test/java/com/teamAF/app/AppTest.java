@@ -149,4 +149,11 @@ public class AppTest {
         List<Movie> filtered = movieService.filterMovies(List.of("ANIMATION"), "");
         assertEquals(0, filtered.size());
     }
+
+    @Test
+    void filterMovies_withNoMatchingGenreAndMatchingQuery() {
+        List<Movie> filtered = movieService.filterMovies(List.of("ANIMATION"), "Matrix"); {
+            assertEquals(0, filtered.size());
+        }
+    }
 }
