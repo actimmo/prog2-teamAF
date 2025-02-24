@@ -84,6 +84,9 @@ public class HomeController implements Initializable {
                 sortMoviesDescending();
             }
         });
+
+        // hitting enter while focus on searchField triggers filter
+        searchField.setOnAction(this::handleSearch);
     }
 
     public void sortMoviesAscending() {
