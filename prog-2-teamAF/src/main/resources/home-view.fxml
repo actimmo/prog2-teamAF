@@ -36,7 +36,7 @@
          <CheckComboBox fx:id="genreCheckComboBox" styleClass="filter-combo-box" stylesheets="@styles.css" />
 
          <JFXButton fx:id="searchBtn" onAction="#handleSearch" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
-         <Label fx:id="selectedGenresLabel" styleClass="text-white" stylesheets="@styles.css" text="Selected Genres:"/>
+         <Label fx:id="selectedGenresLabel" styleClass="text-white" stylesheets="@styles.css" text="Selected Genres:"  prefWidth="300.0" wrapText="true"/>
       </children>
       <VBox.margin>
          <Insets />
