@@ -52,7 +52,8 @@ public class Movie {
         return genres;
     };
 
-    public static List<Movie> initializeMovies(){
+    // Initialize allMovies from JSON
+    public static List<Movie> initializeMoviesDummyMoviesFromJson(){
         List<Movie> movies = new ArrayList<>();
         try{
             Path path = Paths.get(FhmdbApplication.class.getClassLoader().getResource("movies.json").toURI());

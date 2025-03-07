@@ -43,10 +43,6 @@ public class HomeController implements Initializable {
     public HomeController() {
     }
 
-    public HomeController(MovieService movieService) {
-        this.movieService = movieService;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (movieService == null) {
