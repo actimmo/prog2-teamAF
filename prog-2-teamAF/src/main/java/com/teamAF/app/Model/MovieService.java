@@ -13,30 +13,10 @@ import java.util.*;
 public class MovieService {
     private final List<Movie> allMovies;
 
-    // Initialize allMovies from JSON
+
     public MovieService() {
-        List<Movie> movies = new ArrayList<>();
-        try{
-            Path path = Paths.get(FhmdbApplication.class.getClassLoader().getResource("movies.json").toURI());
-            String jsonText = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-            JSONArray jsonArray = new JSONArray(jsonText);
+        List<Movie> movies = Movie.initializeMoviesDummyMoviesFromJson();
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String title = jsonObject.getString("title");
-                String desc = jsonObject.getString("description");
-                JSONArray genresArray = jsonObject.getJSONArray("genres");
-                List<String> genres = new ArrayList<>();
-                for (int j = 0; j < genresArray.length(); j++) {
-                    genres.add(genresArray.getString(j));
-                }
-                Movie movie = new Movie(title, desc, genres);
-                movies.add(movie);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         this.allMovies = movies;
     }
 
@@ -53,16 +33,15 @@ public class MovieService {
         Set<String> seenTitles = new HashSet<>();
         List<Movie> filteredMovies = new ArrayList<>();
 
+        boolean hasGenres = selectedGenres != null && !selectedGenres.isEmpty() && !selectedGenres.get(0).isEmpty();
+        boolean hasQuery = searchQuery != null && !searchQuery.isEmpty();
+
         for (Movie movie : allMovies) {
-            boolean matchesGenre = selectedGenres == null || selectedGenres.isEmpty() || selectedGenres.get(0).isEmpty();
+            boolean matchesGenre = !hasGenres || movie.getGenreList().stream().anyMatch(selectedGenres::contains);
 
-            for (int i = 0; i < movie.getGenreList().size() && (!matchesGenre); i++) {
-                matchesGenre = selectedGenres.contains(movie.getGenreList().get(i));
-            }
-
-            //TODO: Refactor to single method to make more testable? Improves readability
-            boolean matchesQuery = searchQuery == null || searchQuery.isEmpty() || movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())
-                    || (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
+            boolean matchesQuery = !hasQuery ||
+                    (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())) ||
+                    (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
 
             if (matchesGenre && matchesQuery && seenTitles.add(movie.getTitle().toLowerCase())) {
                 filteredMovies.add(movie);
