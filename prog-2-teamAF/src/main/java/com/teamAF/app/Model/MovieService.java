@@ -60,6 +60,7 @@ public class MovieService {
                 matchesGenre = selectedGenres.contains(movie.getGenreList().get(i));
             }
 
+            //TODO: Refactor to single method to make more testable? Improves readability
             boolean matchesQuery = searchQuery == null || searchQuery.isEmpty() || movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())
                     || (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
 

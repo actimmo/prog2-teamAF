@@ -1,5 +1,7 @@
 package com.teamAF.app;
 
+//TODO: Mirror classes from Java structure
+//TODO: Movie Test & Movie Service Test
 import com.teamAF.app.Controller.HomeController;
 import com.teamAF.app.Model.Movie;
 import com.teamAF.app.Model.MovieService;
