@@ -1,9 +1,13 @@
 package com.teamAF.app.Model;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.teamAF.app.FhmdbApplication;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,7 +20,6 @@ public class MovieService {
 
     public MovieService() {
         List<Movie> movies = Movie.initializeMoviesDummyMoviesFromJson();
-
         this.allMovies = movies;
     }
 
@@ -60,5 +63,35 @@ public class MovieService {
         List<Movie> sorted = new ArrayList<>(movies);
         sorted.sort(Comparator.comparing((Movie m) -> m.getTitle().toLowerCase()).reversed());
         return sorted;
+    }
+
+    public List<Movie> fromJson2List(String json){
+        Gson gson = new Gson();
+        Type movieListType = new TypeToken<List<Movie>>(){}.getType();
+
+        try {
+            List<Movie> movies = gson.fromJson(json, movieListType);
+            return movies;
+
+        } catch (JsonSyntaxException e) {
+            Movie movie = fromJson2Movie(json);
+            return new ArrayList<>(){{if (movie != null) add(movie);}};
+        }
+    }
+
+    protected Movie fromJson2Movie(String json){
+        Gson gson = new Gson();
+        try {
+            Movie movie = gson.fromJson(json, Movie.class);
+           return movie;
+        } catch (JsonSyntaxException ex) {
+            System.out.println("Failed to parse JSON");
+        }
+        return null;
+    }
+
+    public String fromList2Json(List<Movie> movies){
+        Gson gson = new Gson();
+        return gson.toJson(movies);
     }
 }
