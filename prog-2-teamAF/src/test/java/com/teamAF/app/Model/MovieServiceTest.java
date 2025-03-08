@@ -1,19 +1,28 @@
 package com.teamAF.app.Model;
 
+import com.google.gson.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MovieServiceTest {
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
 
 
     private MovieService movieService;
     private List<Movie> allMovies;
+
+    private Movie movieWithFullProps;
+    private String jsonMovieListWithFullProps;
+    private String jsonMovieWithFullProps;
 
     @BeforeEach
     void setUp() {
@@ -30,6 +39,46 @@ public class MovieServiceTest {
                         Arrays.asList("SCIENCE_FICTION", "ACTION"))
         );
         movieService = new MovieService(allMovies);
+
+        movieWithFullProps =  new Movie(
+                UUID.fromString("81d317b0-29e5-4846-97a6-43c07f3edf4a"),
+                "The Godfather",
+                "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                new ArrayList<String>() {{
+                    add("DRAMA");
+                }},
+                1972,
+                "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
+                175,
+                new ArrayList<String>() {{
+                    add("Francis Ford Coppola");
+                }},
+                new ArrayList<String>() {{
+                    add("Mario Puzo");
+                    add("Francis Ford Coppola");
+                }},
+                new ArrayList<String>() {{
+                    add("Marlon Brando");
+                    add("Al Pacino");
+                    add("James Caan");
+                }},
+                9.2
+        );
+
+        jsonMovieListWithFullProps = "[{\"id\":\"81d317b0-29e5-4846-97a6-43c07f3edf4a\",\"title\":\"The Godfather\",\"description\":\"The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.\",\"genres\":[\"DRAMA\"],\"releaseYear\":1972,\"imgUrl\":\"https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg\",\"lengthInMinutes\":175,\"directors\":[\"Francis Ford Coppola\"],\"writers\":[\"Mario Puzo\",\"Francis Ford Coppola\"],\"mainCast\":[\"Marlon Brando\",\"Al Pacino\",\"James Caan\"],\"rating\":9.2}]";
+        jsonMovieWithFullProps = "{\"id\":\"81d317b0-29e5-4846-97a6-43c07f3edf4a\",\"title\":\"The Godfather\",\"description\":\"The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.\",\"genres\":[\"DRAMA\"],\"releaseYear\":1972,\"imgUrl\":\"https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg\",\"lengthInMinutes\":175,\"directors\":[\"Francis Ford Coppola\"],\"writers\":[\"Mario Puzo\",\"Francis Ford Coppola\"],\"mainCast\":[\"Marlon Brando\",\"Al Pacino\",\"James Caan\"],\"rating\":9.2}";
+
+    }
+
+    @BeforeEach
+    public void setUpStreams() {
+        System.setOut(new PrintStream(outContent));
+        movieService = new MovieService();
+    }
+
+    @AfterEach
+    public void restoreStreams() {
+        System.setOut(originalOut);
     }
 
     @Test
@@ -158,5 +207,43 @@ public class MovieServiceTest {
         List<Movie> filtered = movieService.filterMovies(List.of("ANIMATION"), "Matrix"); {
             assertEquals(0, filtered.size());
         }
+    }
+
+    @Test
+    void fromJson2List(){
+        List<Movie> moviesFromjson = movieService.fromJson2List(jsonMovieListWithFullProps);
+        List<Movie> expectedResult = new ArrayList<>();
+        expectedResult.add(movieWithFullProps);
+        assertEquals(moviesFromjson, expectedResult);
+    }
+
+    @Test
+    void fromJson2ListWrongJson(){
+        List<Movie> moviesFromjson = movieService.fromJson2List(jsonMovieWithFullProps);
+        List<Movie> expectedResult = new ArrayList<>();
+        expectedResult.add(movieWithFullProps);
+        assertEquals(moviesFromjson, expectedResult);
+    }
+
+    @Test
+    void fromJson2Movie(){
+        Movie movieFromjson = movieService.fromJson2Movie(jsonMovieWithFullProps);
+        assertEquals(movieFromjson, movieWithFullProps);
+    }
+
+    @Test
+    void fromJson2MovieIncorrectJson() {
+        movieService.fromJson2Movie("asdf");
+
+        assertTrue(outContent.toString().contains("Failed to parse JSON"));
+    }
+
+    @Test
+    void  fromList2Json(){
+        List<Movie> source = new ArrayList<>();
+        source.add(movieWithFullProps);
+        String jsonFromList = movieService.fromList2Json(source);
+        assertEquals(jsonMovieListWithFullProps, jsonFromList);
+
     }
 }
