@@ -1,5 +1,6 @@
 package com.teamAF.app.Model;
 
+import com.github.eventmanager.EventManager;
 import com.teamAF.app.FhmdbApplication;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,9 +13,11 @@ import java.util.*;
 
 public class MovieService {
     private final List<Movie> allMovies;
+    private EventManager eventManager;
 
     // Initialize allMovies from JSON
-    public MovieService() {
+    public MovieService(EventManager eventManager) {
+        this.eventManager = eventManager;
         List<Movie> movies = new ArrayList<>();
         try{
             Path path = Paths.get(FhmdbApplication.class.getClassLoader().getResource("movies.json").toURI());
@@ -35,7 +38,7 @@ public class MovieService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            eventManager.logErrorMessage("Error initializing movies from JSON");
         }
         this.allMovies = movies;
     }

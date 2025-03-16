@@ -1,6 +1,8 @@
 package com.teamAF.app.Model;
 
 import com.teamAF.app.FhmdbApplication;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,10 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@Getter
+@Setter
 public class Movie {
+    private String id;
     private String title;
     private String description;
     private List<String> genres;
+    private int releaseYear;
+    private String imgUrl;
+    private int lengthInMinutes;
+    private List<String> directors;
+    private List<String> writers;
+    private List<String> mainCast;
+    private int rating;
 
     public Movie(String title, String description, List<String> genres) {
         this.title = title;
@@ -23,12 +35,7 @@ public class Movie {
         this.genres = genres;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
+    public Movie() {
     }
 
     /**

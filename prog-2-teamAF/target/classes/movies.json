@@ -1,0 +1,212 @@
+[
+    {
+        "title": "The Shawshank Redemption",
+        "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+        "genres": [
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "The Godfather",
+        "description": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+        "genres": [
+            "CRIME",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "12 Angry Men",
+        "description": "A jury holdout attempts to prevent a miscarriage of justice by forcing his colleagues to reconsider the evidence.",
+        "genres": [
+            "CRIME",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "The Dark Knight",
+        "description": "When the menace known as the Joker emerges from his mysterious past, he wreaks havoc and chaos on the people of Gotham.",
+        "genres": [
+            "ACTION",
+            "CRIME",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "Schindler's List",
+        "description": "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
+        "genres": [
+            "BIOGRAPHY",
+            "DRAMA",
+            "HISTORY"
+        ]
+    },
+    {
+        "title": "The Lord of the Rings: The Return of the King",
+        "description": "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
+        "genres": [
+            "ACTION",
+            "ADVENTURE",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "Pulp Fiction",
+        "description": "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+        "genres": [
+            "CRIME",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "The Good, the Bad and the Ugly",
+        "description": "A bounty hunting scam joins two men in an uneasy alliance against a third in a race to find a fortune in gold buried in a remote cemetery.",
+        "genres": [
+            "ADVENTURE",
+            "WESTERN"
+        ]
+    },
+    {
+        "title": "The Lord of the Rings: The Fellowship of the Ring",
+        "description": "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
+        "genres": [
+            "ACTION",
+            "ADVENTURE",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "Fight Club",
+        "description": "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
+        "genres": [
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "Forrest Gump",
+        "description": "The presidencies of Kennedy and Johnson, the Vietnam War, the Watergate scandal and other historical events unfold from the perspective of an Alabama man with an IQ of 75.",
+        "genres": [
+            "DRAMA",
+            "ROMANCE"
+        ]
+    },
+    {
+        "title": "Inception",
+        "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+        "genres": [
+            "ACTION",
+            "ADVENTURE",
+            "SCIENCE_FICTION"
+        ]
+    },
+    {
+        "title": "The Lord of the Rings: The Two Towers",
+        "description": "While Frodo and Sam edge closer to Mordor with the help of the shifty Gollum, the divided fellowship makes a stand against Sauron's new ally, Saruman.",
+        "genres": [
+            "ACTION",
+            "ADVENTURE",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "Star Wars: Episode V - The Empire Strikes Back",
+        "description": "After the Rebels are overpowered by the Empire on the ice planet Hoth, Luke Skywalker begins Jedi training with Yoda.",
+        "genres": [
+            "ACTION",
+            "ADVENTURE",
+            "FANTASY"
+        ]
+    },
+    {
+        "title": "The Matrix",
+        "description": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
+        "genres": [
+            "ACTION",
+            "SCIENCE_FICTION"
+        ]
+    },
+    {
+        "title": "Goodfellas",
+        "description": "The story of Henry Hill and his life in the mob, covering his relationship with his wife Karen Hill and his mob partners.",
+        "genres": [
+            "BIOGRAPHY",
+            "CRIME",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "One Flew Over the Cuckoo's Nest",
+        "description": "A criminal pleads insanity and is admitted to a mental institution, where he rebels against the oppressive nurse and rallies up the scared patients.",
+        "genres": [
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "Se7en",
+        "description": "Two detectives, a rookie and a veteran, hunt a serial killer who uses the seven deadly sins as his motives.",
+        "genres": [
+            "CRIME",
+            "DRAMA",
+            "MYSTERY"
+        ]
+    },
+    {
+        "title": "Seven Samurai",
+        "description": "A poor village under attack by bandits recruits seven unemployed samurai to help them defend themselves.",
+        "genres": [
+            "ACTION",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "It's a Wonderful Life",
+        "description": "An angel is sent from Heaven to help a desperately frustrated businessman by showing him what life would have been like if he had never existed.",
+        "genres": [
+            "DRAMA",
+            "FAMILY",
+            "FANTASY"
+        ]
+    },
+    {
+        "title": "The Silence of the Lambs",
+        "description": "A young F.B.I. cadet must receive the help of an incarcerated and manipulative cannibal killer to help catch another serial killer.",
+        "genres": [
+            "CRIME",
+            "DRAMA",
+            "THRILLER"
+        ]
+    },
+    {
+        "title": "Saving Private Ryan",
+        "description": "Following the Normandy Landings, a group of U.S. soldiers go behind enemy lines to retrieve a paratrooper whose brothers have been killed in action.",
+        "genres": [
+            "DRAMA",
+            "WAR"
+        ]
+    },
+    {
+        "title": "City of God",
+        "description": "In the slums of Rio, two kids' paths diverge as one struggles to become a photographer and the other a kingpin.",
+        "genres": [
+            "CRIME",
+            "DRAMA"
+        ]
+    },
+    {
+        "title": "Life Is Beautiful",
+        "description": "When an open-minded Jewish librarian and his son become victims of the Holocaust, he uses a perfect mixture of will, humor, and imagination to protect his son from the dangers around their camp.",
+        "genres": [
+            "COMEDY",
+            "DRAMA",
+            "ROMANCE"
+        ]
+    },
+    {
+        "title": "The Usual Suspects",
+        "description": "A sole survivor tells of the twisty events leading up to a horrific gun battle on a boat, which began when five criminals met at a random police lineup.",
+        "genres": [
+            "CRIME",
+            "DRAMA",
+            "MYSTERY"
+        ]
+    }
+]
