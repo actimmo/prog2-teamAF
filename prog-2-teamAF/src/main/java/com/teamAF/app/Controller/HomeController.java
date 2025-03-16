@@ -46,10 +46,6 @@ public class HomeController implements Initializable {
     public HomeController() {
     }
 
-    public HomeController(MovieService movieService) {
-        this.movieService = movieService;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Initialize EventManager with INFO logging level and console output enabled

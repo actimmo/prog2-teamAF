@@ -1,10 +1,14 @@
 package com.teamAF.app.Model;
 
 import com.github.eventmanager.EventManager;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.teamAF.app.FhmdbApplication;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,30 +22,9 @@ public class MovieService {
     // Initialize allMovies from JSON
     public MovieService(EventManager eventManager) {
         this.eventManager = eventManager;
-        List<Movie> movies = new ArrayList<>();
-        try{
-            Path path = Paths.get(FhmdbApplication.class.getClassLoader().getResource("movies.json").toURI());
-            String jsonText = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-            JSONArray jsonArray = new JSONArray(jsonText);
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String title = jsonObject.getString("title");
-                String desc = jsonObject.getString("description");
-                JSONArray genresArray = jsonObject.getJSONArray("genres");
-                List<String> genres = new ArrayList<>();
-                for (int j = 0; j < genresArray.length(); j++) {
-                    genres.add(genresArray.getString(j));
-                }
-                Movie movie = new Movie(title, desc, genres);
-                movies.add(movie);
-            }
-
-        } catch (Exception e) {
-            eventManager.logErrorMessage("Error initializing movies from JSON");
-        }
+        List<Movie> movies = Movie.initializeMoviesDummyMoviesFromJson();
         this.allMovies = movies;
-    }
+        }
 
     // Defensive copy for testing purposes
     public MovieService(List<Movie> movies) {
@@ -56,15 +39,15 @@ public class MovieService {
         Set<String> seenTitles = new HashSet<>();
         List<Movie> filteredMovies = new ArrayList<>();
 
+        boolean hasGenres = selectedGenres != null && !selectedGenres.isEmpty() && !selectedGenres.get(0).isEmpty();
+        boolean hasQuery = searchQuery != null && !searchQuery.isEmpty();
+
         for (Movie movie : allMovies) {
-            boolean matchesGenre = selectedGenres == null || selectedGenres.isEmpty() || selectedGenres.get(0).isEmpty();
+            boolean matchesGenre = !hasGenres || movie.getGenreList().stream().anyMatch(selectedGenres::contains);
 
-            for (int i = 0; i < movie.getGenreList().size() && (!matchesGenre); i++) {
-                matchesGenre = selectedGenres.contains(movie.getGenreList().get(i));
-            }
-
-            boolean matchesQuery = searchQuery == null || searchQuery.isEmpty() || movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())
-                    || (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
+            boolean matchesQuery = !hasQuery ||
+                    (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())) ||
+                    (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
 
             if (matchesGenre && matchesQuery && seenTitles.add(movie.getTitle().toLowerCase())) {
                 filteredMovies.add(movie);
@@ -83,5 +66,35 @@ public class MovieService {
         List<Movie> sorted = new ArrayList<>(movies);
         sorted.sort(Comparator.comparing((Movie m) -> m.getTitle().toLowerCase()).reversed());
         return sorted;
+    }
+
+    public List<Movie> fromJson2List(String json){
+        Gson gson = new Gson();
+        Type movieListType = new TypeToken<List<Movie>>(){}.getType();
+
+        try {
+            List<Movie> movies = gson.fromJson(json, movieListType);
+            return movies;
+
+        } catch (JsonSyntaxException e) {
+            Movie movie = fromJson2Movie(json);
+            return new ArrayList<>(){{if (movie != null) add(movie);}};
+        }
+    }
+
+    protected Movie fromJson2Movie(String json){
+        Gson gson = new Gson();
+        try {
+            Movie movie = gson.fromJson(json, Movie.class);
+           return movie;
+        } catch (JsonSyntaxException ex) {
+            System.out.println("Failed to parse JSON");
+        }
+        return null;
+    }
+
+    public String fromList2Json(List<Movie> movies){
+        Gson gson = new Gson();
+        return gson.toJson(movies);
     }
 }
