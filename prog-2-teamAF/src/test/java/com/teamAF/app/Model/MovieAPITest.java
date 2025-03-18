@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -89,5 +91,77 @@ class MovieAPITest {
 
         Movie movie = this.movieAPI.getMovieByID("1");
         assertNull(movie, "Should return null when API responds with 500");
+    }
+
+    @Test
+    void getMovies_with_query_param_success() throws IOException, InterruptedException {
+        MovieAPI movieAPI = new MovieAPI(eventManager);
+        Map<String,String> queryParams = new HashMap<>();
+        queryParams.put("query","life is");
+
+
+        List<Movie> movies = movieAPI.getMoviesWithParams(queryParams);
+        assertEquals(1, movies.size());
+    }
+
+    @Test
+    void getMovies_with_genre_param_success() throws IOException, InterruptedException {
+        MovieAPI movieAPI = new MovieAPI(eventManager);
+        Map<String,String> queryParams = new HashMap<>();
+        queryParams.put("genre","WAR");
+
+
+        List<Movie> movies = movieAPI.getMoviesWithParams(queryParams);
+        assertEquals(2, movies.size());
+    }
+
+    @Test
+    void getMovies_with_releaseYear_param_success() throws IOException, InterruptedException {
+        MovieAPI movieAPI = new MovieAPI(eventManager);
+        Map<String,String> queryParams = new HashMap<>();
+        queryParams.put("releaseYear","1998");
+
+
+        List<Movie> movies = movieAPI.getMoviesWithParams(queryParams);
+        assertEquals(1, movies.size());
+    }
+
+    @Test
+    void getMovies_with_rating_param_success() throws IOException, InterruptedException {
+        MovieAPI movieAPI = new MovieAPI(eventManager);
+        Map<String,String> queryParams = new HashMap<>();
+        queryParams.put("ratingFrom","9.3");
+
+
+        List<Movie> movies = movieAPI.getMoviesWithParams(queryParams);
+        assertEquals(1, movies.size());
+    }
+
+    @Test
+    void getMovies_with_all_params_success() throws IOException, InterruptedException {
+        MovieAPI movieAPI = new MovieAPI(eventManager);
+        Map<String,String> queryParams = new HashMap<>();
+        queryParams.put("query","saving pri");
+        queryParams.put("releaseYear","1998");
+        queryParams.put("genre","WAR");
+        queryParams.put("ratingFrom","8.6");
+
+
+        List<Movie> movies = movieAPI.getMoviesWithParams(queryParams);
+        assertEquals(1, movies.size());
+    }
+
+    @Test
+    void getMovies_with_empty_params_success() throws IOException, InterruptedException {
+        MovieAPI movieAPI = new MovieAPI(eventManager);
+        Map<String,String> queryParams = new HashMap<>();
+        queryParams.put("query","");
+        queryParams.put("releaseYear","");
+        queryParams.put("genre","");
+        queryParams.put("rating","");
+
+
+        List<Movie> movies = movieAPI.getMoviesWithParams(queryParams);
+        assertEquals(31, movies.size());
     }
 }

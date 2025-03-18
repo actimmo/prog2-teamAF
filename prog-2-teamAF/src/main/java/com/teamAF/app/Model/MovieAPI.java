@@ -6,12 +6,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.eventmanager.EventManager;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A class that provides methods to interact with the movie API service.
@@ -71,6 +75,64 @@ public class MovieAPI {
             this.eventManager.logErrorMessage("Interrupted Exception");
             return null;
         } catch (IllegalArgumentException e){
+            this.eventManager.logErrorMessage("Invalid URL");
+            return null;
+        }
+    }
+
+
+    /**
+     * Retrieves a list of movies from the specified URL.
+     * Sends an HTTP GET request to the URL and parses the response as a list of {@link Movie} objects.
+     * If the request is successful (status code 200), the response body is parsed into a list of {@link Movie} objects.
+     * If the request fails, an appropriate error message is logged, and null is returned.
+     *
+     * @param queryParams a Map which could contain all the query params
+     *
+     * @return A list of {@link Movie} objects, or null if an error occurs during the request or parsing.
+     */
+    public List<Movie> getMoviesWithParams(Map<String, String> queryParams) {
+        HttpResponse<String> response;
+        HttpClient client = this.httpClient;
+
+        try {
+            String queryString = queryParams.entrySet().stream()
+                    .map(entry -> {
+                        try {
+                            return URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            this.eventManager.logErrorMessage("UnsupportedEncodingException");
+                            return "";
+                        }
+                    })
+                    .collect(Collectors.joining("&"));
+
+            String urlWithParams = URL + "?" + queryString;
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(urlWithParams))
+                    .GET()
+                    .build();
+
+            // Send request and get response
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                this.eventManager.logInfoMessage("Successfully retrieved movies with parameters.");
+                return loadJSON(response);
+            } else {
+                logFailedResponseCode(response);
+                return null;
+            }
+        }  catch (ConnectException e) {
+            this.eventManager.logErrorMessage("Connection failed");
+            return null;
+        } catch (IOException e) {
+            this.eventManager.logErrorMessage("IO Exception");
+            return null;
+        } catch (InterruptedException e) {
+            this.eventManager.logErrorMessage("Interrupted Exception");
+            return null;
+        } catch (IllegalArgumentException e) {
             this.eventManager.logErrorMessage("Invalid URL");
             return null;
         }
