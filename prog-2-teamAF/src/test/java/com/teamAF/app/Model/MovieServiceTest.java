@@ -41,7 +41,7 @@ public class MovieServiceTest {
         movieService = new MovieService(allMovies);
 
         movieWithFullProps =  new Movie(
-                UUID.fromString("81d317b0-29e5-4846-97a6-43c07f3edf4a"),
+                "81d317b0-29e5-4846-97a6-43c07f3edf4a",
                 "The Godfather",
                 "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
                 new ArrayList<String>() {{
@@ -73,7 +73,7 @@ public class MovieServiceTest {
     @BeforeEach
     public void setUpStreams() {
         System.setOut(new PrintStream(outContent));
-        movieService = new MovieService();
+        movieService = new MovieService(Movie.initializeMoviesDummyMoviesFromJson());
     }
 
     @AfterEach

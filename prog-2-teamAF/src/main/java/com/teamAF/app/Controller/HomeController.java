@@ -1,5 +1,7 @@
 package com.teamAF.app.Controller;
 
+import com.github.eventmanager.EventManager;
+import com.github.eventmanager.filehandlers.LogHandler;
 import com.jfoenix.controls.*;
 import com.teamAF.app.Model.Movie;
 import com.teamAF.app.Model.MovieService;
@@ -38,6 +40,7 @@ public class HomeController implements Initializable {
     private MovieService movieService;
     public ObservableList<String> selectedGenres = FXCollections.observableArrayList();
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    private EventManager eventManager;
 
     //No-Arg Constructor for FXML
     public HomeController() {
@@ -45,8 +48,16 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Initialize EventManager with INFO logging level and console output enabled
+        LogHandler logHandler = new LogHandler("configPath");
+        logHandler.getConfig().getEvent().setPrintToConsole(true);
+        logHandler.getConfig().getEvent().setInformationalMode(true);
+        logHandler.getConfig().getInternalEvents().setEnabled(false);
+
+        this.eventManager = new EventManager(logHandler);
+        eventManager.logInfoMessage("Home Controller initialized");
         if (movieService == null) {
-            movieService = new MovieService();
+            movieService = new MovieService(this.eventManager);
         }
 
         observableMovies.setAll(movieService.getAllMovies());
@@ -86,16 +97,19 @@ public class HomeController implements Initializable {
     }
 
     public void sortMoviesAscending() {
+        eventManager.logInfoMessage("Sorting movies in ascending order");
         List<Movie> sorted = movieService.sortMoviesAscending(observableMovies);
         observableMovies.setAll(sorted);
     }
 
     public void sortMoviesDescending() {
+        eventManager.logInfoMessage("Sorting movies in descending order");
         List<Movie> sorted = movieService.sortMoviesDescending(observableMovies);
         observableMovies.setAll(sorted);
     }
 
     public void filterMovies(List<String> selectedGenres, String searchQuery) {
+        eventManager.logInfoMessage( "Filtering movies by genres - " + selectedGenres + " and search query - " + searchQuery);
         List<Movie> filtered = movieService.filterMovies(selectedGenres, searchQuery);
         observableMovies.setAll(filtered);
     }

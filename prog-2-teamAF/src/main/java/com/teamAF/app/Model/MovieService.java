@@ -1,5 +1,6 @@
 package com.teamAF.app.Model;
 
+import com.github.eventmanager.EventManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -16,12 +17,14 @@ import java.util.*;
 
 public class MovieService {
     private final List<Movie> allMovies;
+    private EventManager eventManager;
 
-
-    public MovieService() {
+    // Initialize allMovies from JSON
+    public MovieService(EventManager eventManager) {
+        this.eventManager = eventManager;
         List<Movie> movies = Movie.initializeMoviesDummyMoviesFromJson();
         this.allMovies = movies;
-    }
+        }
 
     // Defensive copy for testing purposes
     public MovieService(List<Movie> movies) {
