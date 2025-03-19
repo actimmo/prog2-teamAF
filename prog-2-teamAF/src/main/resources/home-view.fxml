@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -9,10 +8,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<?import javafx.scene.control.ComboBox?>
 <?import org.controlsfx.control.CheckComboBox?>
-<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.Controller.HomeController">
+
+<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.Controller.HomeController">
    <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="347.0" spacing="20.0" style="-fx-background-color: black;">
       <padding>
          <Insets bottom="7.0" left="10.0" top="7.0" />
@@ -34,16 +32,24 @@
          <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)" />
          <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb" />
          <CheckComboBox fx:id="genreCheckComboBox" styleClass="filter-combo-box" stylesheets="@styles.css" />
-
+         <CheckComboBox fx:id="yearCheckComboBox" prefHeight="25.0" prefWidth="170.0" />
+         <CheckComboBox fx:id="ratingCheckComboBox" prefHeight="25.0" prefWidth="130.0" />
          <JFXButton fx:id="searchBtn" onAction="#handleSearch" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
-         <Label fx:id="selectedGenresLabel" styleClass="text-white" stylesheets="@styles.css" text="Selected Genres:"  prefWidth="300.0" wrapText="true"/>
+         <VBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
+            <children>
+               <Label fx:id="selectedGenresLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Genres:" wrapText="true">
+                  <VBox.margin>
+                     <Insets top="-15.0" />
+                  </VBox.margin></Label>
+               <Label fx:id="selectedYearsLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Years:" wrapText="true">
+                  <VBox.margin>
+                     <Insets />
+                  </VBox.margin>
+               </Label>
+               <Label fx:id="selectedRatingsLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Ratings:" wrapText="true" />
+            </children>
+         </VBox>
       </children>
-      <VBox.margin>
-         <Insets />
-      </VBox.margin>
-      <padding>
-         <Insets bottom="20.0" left="10.0" top="20.0" />
-      </padding>
    </HBox>
-   <JFXListView fx:id="movieListView" styleClass="background-black" style="-fx-background-color: black;" stylesheets="@styles.css" VBox.vgrow="ALWAYS" />
+   <JFXListView fx:id="movieListView" style="-fx-background-color: black;" styleClass="background-black" stylesheets="@styles.css" VBox.vgrow="ALWAYS" />
 </VBox>

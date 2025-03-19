@@ -14,17 +14,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MovieService {
     private final List<Movie> allMovies;
     private EventManager eventManager;
+    private MovieAPI movieAPI;
 
-    // Initialize allMovies from JSON
+    // Initialize allMovies from API
     public MovieService(EventManager eventManager) {
         this.eventManager = eventManager;
-        List<Movie> movies = Movie.initializeMoviesDummyMoviesFromJson();
-        this.allMovies = movies;
-        }
+        this.movieAPI = new MovieAPI(eventManager);
+        this.allMovies = movieAPI.getMovies();
+    }
 
     // Defensive copy for testing purposes
     public MovieService(List<Movie> movies) {
@@ -35,21 +37,25 @@ public class MovieService {
         return allMovies;
     }
 
-    public List<Movie> filterMovies(List<String> selectedGenres, String searchQuery) {
+    public List<Movie> filterMovies(List<String> selectedGenres, String searchQuery, List<String> years, List<String> ratings) {
         Set<String> seenTitles = new HashSet<>();
         List<Movie> filteredMovies = new ArrayList<>();
 
         boolean hasGenres = selectedGenres != null && !selectedGenres.isEmpty() && !selectedGenres.get(0).isEmpty();
         boolean hasQuery = searchQuery != null && !searchQuery.isEmpty();
+        boolean hasYears = years != null && !years.isEmpty();
+        boolean hasRatings = ratings != null && !ratings.isEmpty();
+        Set<Double> ratingValues = hasRatings ? ratings.stream().map(Double::parseDouble).collect(Collectors.toSet()) : Collections.emptySet();
 
         for (Movie movie : allMovies) {
             boolean matchesGenre = !hasGenres || movie.getGenreList().stream().anyMatch(selectedGenres::contains);
-
             boolean matchesQuery = !hasQuery ||
                     (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())) ||
                     (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
+            boolean matchesYear = !hasYears || years.contains(String.valueOf(movie.getReleaseYear()));
+            boolean matchesRating = !hasRatings || ratingValues.contains(movie.getRating());
 
-            if (matchesGenre && matchesQuery && seenTitles.add(movie.getTitle().toLowerCase())) {
+            if (matchesGenre && matchesQuery && matchesYear && matchesRating && seenTitles.add(movie.getTitle().toLowerCase())) {
                 filteredMovies.add(movie);
             }
         }
