@@ -29,7 +29,7 @@ public class HomeController implements Initializable {
     public JFXListView<Movie> movieListView;
 
     @FXML
-    CheckComboBox<String> genreCheckComboBox;
+    public CheckComboBox<String> genreCheckComboBox;
 
     @FXML
     public CheckComboBox<String> yearCheckComboBox;
