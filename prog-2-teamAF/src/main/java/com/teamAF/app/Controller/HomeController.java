@@ -66,16 +66,21 @@ public class HomeController implements Initializable {
         logHandler.getConfig().getEvent().setInformationalMode(true);
         logHandler.getConfig().getInternalEvents().setEnabled(false);
 
+        // Create EventManager instance
         this.eventManager = new EventManager(logHandler);
         eventManager.logInfoMessage("Home Controller initialized");
+
+        // Initialize MovieService if not already initialized
         if (movieService == null) {
             movieService = new MovieService(this.eventManager);
         }
 
+        // Set all movies to observableMovies and bind to movieListView
         observableMovies.setAll(movieService.getAllMovies());
         movieListView.setItems(observableMovies);
         movieListView.setCellFactory(listView -> new MovieCell());
 
+        // Initialize genreCheckComboBox with predefined genres
         ArrayList<String> genres = new ArrayList<>(Arrays.asList(
                 "ACTION", "ADVENTURE", "ANIMATION", "BIOGRAPHY", "COMEDY", "CRIME",
                 "DRAMA", "DOCUMENTARY", "FAMILY", "FANTASY", "HISTORY", "HORROR",
@@ -152,6 +157,7 @@ public class HomeController implements Initializable {
         observableMovies.setAll(filtered);
     }
 
+    // for debugging purposes in the UI
     private void updateSelectedGenresLabel() {
         if (selectedGenres.isEmpty())
             selectedGenresLabel.setText("Selected Genres: ");
@@ -159,6 +165,7 @@ public class HomeController implements Initializable {
          selectedGenresLabel.setText("Selected Genres: " + String.join(", ", selectedGenres));
     }
 
+    // for debugging purposes in the UI
     private void updateSelectedYearsLabel() {
         List<String> selectedYears = yearCheckComboBox.getCheckModel().getCheckedItems();
         if (selectedYears.isEmpty())
@@ -166,7 +173,7 @@ public class HomeController implements Initializable {
         else
             selectedYearsLabel.setText("Selected Years: " + String.join(", ", selectedYears));
     }
-
+    // for debugging purposes in the UI
     private void updateSelectedRatingsLabel() {
         List<String> selectedRatings = ratingCheckComboBox.getCheckModel().getCheckedItems();
         if (selectedRatings.isEmpty())
@@ -174,6 +181,7 @@ public class HomeController implements Initializable {
         else
             selectedRatingsLabel.setText("Selected Ratings: " + String.join(", ", selectedRatings));
     }
+
 
     @FXML
     private void handleSearch(ActionEvent event) {
