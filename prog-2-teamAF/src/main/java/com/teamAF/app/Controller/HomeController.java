@@ -17,6 +17,7 @@ import org.controlsfx.control.CheckComboBox;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -190,5 +191,14 @@ public class HomeController implements Initializable {
         filterMovies(selectedGenres, query, years, ratings);
     }
 
+    public String getMostPopularActor(List<Movie> movies) {
+        return movies.stream()
+                .flatMap(movie -> movie.getMainCast().stream())
+                .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("Empty List");
+    }
 
 }

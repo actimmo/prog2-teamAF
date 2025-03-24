@@ -3,6 +3,8 @@ import com.teamAF.app.Model.Movie;
 import org.junit.jupiter.api.*;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class HomeControllerTest {
 
     private HomeController controller;
@@ -60,6 +62,7 @@ public class HomeControllerTest {
     @Test
     void getMostPopularActor() {
         String mostPopularActor = controller.getMostPopularActor(movies);
+        assertEquals("Leonardo DiCaprio", mostPopularActor);
     }
 
 }
