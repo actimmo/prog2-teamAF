@@ -192,7 +192,8 @@ public class HomeController implements Initializable {
     }
 
     /**
-     * Returns the name of the actor who appears most often across all movies' main casts.
+     * Returns the name of the actor who appears most often across all movies' main casts. If
+     * no actor contained an error is thrown. If multiple actors are equally popular a list is returned.
      */
     public String getMostPopularActor(List<Movie> movies) {
                 Map<String, Long> counts = movies.stream()
@@ -220,6 +221,34 @@ public class HomeController implements Initializable {
                 }
     }
 
+    /**
+     * Filters out the movie with the longest title and returns the number of characters
+     * in that title.
+     */
+    public int getLongestMovieTitle(List<Movie> movies) {
+        return movies.stream()
+                .mapToInt(movie -> movie.getTitle().length())
+                .max()
+                .orElse(0);
+    }
 
+    /**
+     * Counts the number of movies directed by a specific director.
+     */
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        return movies.stream()
+                .filter(movie -> movie.getDirectors().contains(director))
+                .count();
+    }
+
+    /**
+     * Returns a list of all movies released between startYear and endYear (inclusive).
+     */
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        return movies.stream()
+                .filter(movie -> movie.getReleaseYear() >= startYear
+                        && movie.getReleaseYear() <= endYear)
+                .collect(Collectors.toList());
+    }
 
 }

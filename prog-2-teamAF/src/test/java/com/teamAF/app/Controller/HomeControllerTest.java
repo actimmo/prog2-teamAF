@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HomeControllerTest {
 
@@ -51,7 +52,7 @@ public class HomeControllerTest {
                         2013,
                         "https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_FMjpg_UX1000_.jpg",
                         180,
-                        List.of("Martin Scorsese "),
+                        List.of("Martin Scorsese"),
                         List.of("Martin Scorsese"),
                         Arrays.asList("Leonardo DiCaprio", "Jonah Hill", "Margot Robbie"),
                         8.2),
@@ -63,7 +64,7 @@ public class HomeControllerTest {
                         2013,
                         "https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_FMjpg_UX1000_.jpg",
                         180,
-                        List.of("Martin Scorsese "),
+                        List.of("Martin Scorsese"),
                         List.of("Martin Scorsese"),
                         List.of(),
                         8.2)
@@ -72,22 +73,102 @@ public class HomeControllerTest {
     }
 
     @Test
-    void getMostPopularActor() {
+    void testGetMostPopularActor() {
         String mostPopularActor = controller.getMostPopularActor(movies);
         assertEquals("Leonardo DiCaprio", mostPopularActor);
     }
 
     @Test
-    void getMostPopularActor_MulitpleMostPopularActor() {
+    void testGetMostPopularActor_MulitpleMostPopularActor() {
         String mostPopularActor = controller.getMostPopularActor(movies.subList(0, 2));
         assertEquals(("Leonardo DiCaprio, Carrie-Anne Moss, Keanu Reeves, Joseph Gordon-Levitt, " +
                 "Laurence Fishburne, Elliot Page"), mostPopularActor);
     }
 
     @Test
-    void getMostPopularActor_noActorsReceived() {
+    void testGetMostPopularActor_noActorsReceived() {
         String mostPopularActor = controller.getMostPopularActor(movies.subList(3, 3));
         assertEquals("No Actors Found", mostPopularActor);
+    }
+
+    @Test
+    void testGetLongestMovieTitle_withExistingMovies() {
+        int result = controller.getLongestMovieTitle(movies);
+        assertEquals(23, result,
+                "Should be the length of 'The Wolf of Wall Street' (23).");
+    }
+
+    @Test
+    void testGetLongestMovieTitle_withNoMovies() {
+        List<Movie> emptyList = new ArrayList<>();
+        int result = controller.getLongestMovieTitle(emptyList);
+        assertEquals(0, result, "Expected 0 when no movies are given.");
+    }
+
+    @Test
+    void testGetLongestMovieTitle_sameLengthTitles() {
+        List<Movie> customMovies = new ArrayList<>(movies);
+        customMovies.add(
+                new Movie("test-id", "Another Wolf of Wall Street",
+                        "Test description...", new ArrayList<>(), 2013,
+                        "", 100, new ArrayList<>(), new ArrayList<>(),
+                        new ArrayList<>(), 7.0)
+        );
+
+        int length = controller.getLongestMovieTitle(customMovies);
+        assertEquals(27, length,
+                "In case of a tie max length is returned..");
+    }
+
+    @Test
+    void testCountMoviesFrom_singleDirector() {
+        long count = controller.countMoviesFrom(movies, "Christopher Nolan");
+        assertEquals(1, count);
+    }
+
+    @Test
+    void testCountMoviesFrom_directorNotPresent() {
+        long count = controller.countMoviesFrom(movies, "Steven Spielberg");
+        assertEquals(0, count, "If the director is not present 0 is returned");
+    }
+
+    @Test
+    void testCountMoviesFrom_multipleMatches() {
+
+        long countExact = controller.countMoviesFrom(movies, "Martin Scorsese");
+        assertEquals(2, countExact);
+    }
+
+    @Test
+    void testCountMoviesFrom_emptyMovieList() {
+        List<Movie> emptyList = new ArrayList<>();
+        long count = controller.countMoviesFrom(emptyList, "Christopher Nolan");
+        assertEquals(0, count, "If list is empty, should be 0.");
+    }
+
+    @Test
+    void testGetMoviesBetweenYears_inclusiveRange() {
+        List<Movie> result = controller.getMoviesBetweenYears(movies, 2010, 2013);
+        assertEquals(3, result.size());
+    }
+
+    @Test
+    void testGetMoviesBetweenYears_noneInRange() {
+        List<Movie> result = controller.getMoviesBetweenYears(movies, 2020, 2022);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetMoviesBetweenYears_emptyMovieList() {
+        List<Movie> emptyList = new ArrayList<>();
+        List<Movie> result = controller.getMoviesBetweenYears(emptyList, 1990, 2020);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testGetMoviesBetweenYears_startYearGreaterThanEndYear() {
+        List<Movie> result = controller.getMoviesBetweenYears(movies, 2015, 2010);
+        assertTrue(result.isEmpty());
     }
 
 }
