@@ -162,7 +162,7 @@ public class HomeController implements Initializable {
         if (selectedGenres.isEmpty())
             selectedGenresLabel.setText("Selected Genres: ");
         else
-         selectedGenresLabel.setText("Selected Genres: " + String.join(", ", selectedGenres));
+            selectedGenresLabel.setText("Selected Genres: " + String.join(", ", selectedGenres));
     }
 
     // for debugging purposes in the UI
@@ -182,7 +182,6 @@ public class HomeController implements Initializable {
             selectedRatingsLabel.setText("Selected Ratings: " + String.join(", ", selectedRatings));
     }
 
-
     @FXML
     private void handleSearch(ActionEvent event) {
         String query = searchField.getText();
@@ -190,4 +189,6 @@ public class HomeController implements Initializable {
         List<String> ratings = new ArrayList<>(ratingCheckComboBox.getCheckModel().getCheckedItems());
         filterMovies(selectedGenres, query, years, ratings);
     }
+
+
 }
