@@ -38,7 +38,9 @@ public class Movie {
     }
 
     public Movie() {}
-    public Movie(String id, String title, String description, List<String> genres, int releaseYear, String imgUrl, int lengthInMinutes, List<String> directors, List<String> writers, List<String> mainCast, double rating) {
+    public Movie(String id, String title, String description, List<String> genres, int releaseYear, String imgUrl,
+                 int lengthInMinutes, List<String> directors, List<String> writers, List<String> mainCast,
+                 double rating) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -112,6 +114,7 @@ public class Movie {
     public double getRating() {
         return rating;
     }
+
 
     // Initialize allMovies from JSON
     public static List<Movie> initializeMoviesDummyMoviesFromJson(){
