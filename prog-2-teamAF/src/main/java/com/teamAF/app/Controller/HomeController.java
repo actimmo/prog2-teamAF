@@ -191,14 +191,35 @@ public class HomeController implements Initializable {
         filterMovies(selectedGenres, query, years, ratings);
     }
 
+    /**
+     * Returns the name of the actor who appears most often across all movies' main casts.
+     */
     public String getMostPopularActor(List<Movie> movies) {
-        return movies.stream()
-                .flatMap(movie -> movie.getMainCast().stream())
-                .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()))
-                .entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse("Empty List");
+                Map<String, Long> counts = movies.stream()
+                        .flatMap(movie -> movie.getMainCast().stream())
+                        .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()));
+
+                if (counts.isEmpty()) {
+                    return "No Actors Found";
+                }
+
+                long maxActorCount = counts.values().stream()
+                        .mapToLong(Long::longValue)
+                        .max()
+                        .orElse(0L);
+
+                List<String> topActors = counts.entrySet().stream()
+                        .filter(e -> e.getValue() == maxActorCount)
+                        .map(Map.Entry::getKey)
+                        .toList();
+
+                if (topActors.size() == 1) {
+                    return topActors.get(0);
+                } else {
+                    return String.join(", ", topActors);
+                }
     }
+
+
 
 }

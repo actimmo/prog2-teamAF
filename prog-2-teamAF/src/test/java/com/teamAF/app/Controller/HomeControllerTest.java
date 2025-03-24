@@ -54,6 +54,18 @@ public class HomeControllerTest {
                         List.of("Martin Scorsese "),
                         List.of("Martin Scorsese"),
                         Arrays.asList("Leonardo DiCaprio", "Jonah Hill", "Margot Robbie"),
+                        8.2),
+
+                new Movie("d95d6912-b281-4e08-86b8-f9101f5f2c15",
+                        "The Wolf of Wall Street",
+                        "Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government.",
+                        Arrays.asList("BIOGRAPHY", "COMEDY", "CRIME", "DRAMA"),
+                        2013,
+                        "https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_FMjpg_UX1000_.jpg",
+                        180,
+                        List.of("Martin Scorsese "),
+                        List.of("Martin Scorsese"),
+                        List.of(),
                         8.2)
         );
 
@@ -63,6 +75,19 @@ public class HomeControllerTest {
     void getMostPopularActor() {
         String mostPopularActor = controller.getMostPopularActor(movies);
         assertEquals("Leonardo DiCaprio", mostPopularActor);
+    }
+
+    @Test
+    void getMostPopularActor_MulitpleMostPopularActor() {
+        String mostPopularActor = controller.getMostPopularActor(movies.subList(0, 2));
+        assertEquals(("Leonardo DiCaprio, Carrie-Anne Moss, Keanu Reeves, Joseph Gordon-Levitt, " +
+                "Laurence Fishburne, Elliot Page"), mostPopularActor);
+    }
+
+    @Test
+    void getMostPopularActor_noActorsReceived() {
+        String mostPopularActor = controller.getMostPopularActor(movies.subList(3, 3));
+        assertEquals("No Actors Found", mostPopularActor);
     }
 
 }
