@@ -58,6 +58,8 @@ public class MovieService {
         // List to store filtered results
         List<Movie> filteredMovies = new ArrayList<>();
 
+
+
         // Check which filters are active
         boolean hasGenres = selectedGenres != null && !selectedGenres.isEmpty() && !selectedGenres.get(0).isEmpty();
         boolean hasQuery = searchQuery != null && !searchQuery.isEmpty();
@@ -65,19 +67,33 @@ public class MovieService {
         boolean hasRatings = ratings != null && !ratings.isEmpty();
         Set<Double> ratingValues = hasRatings ? ratings.stream().map(Double::parseDouble).collect(Collectors.toSet()) : Collections.emptySet();
 
-        // Check each movie against active filters
-        for (Movie movie : allMovies) {
-            boolean matchesGenre = !hasGenres || movie.getGenreList().stream().anyMatch(selectedGenres::contains);
-            boolean matchesQuery = !hasQuery ||
-                    (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())) ||
-                    (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
-            boolean matchesYear = !hasYears || years.contains(String.valueOf(movie.getReleaseYear()));
-            boolean matchesRating = !hasRatings || ratingValues.contains(movie.getRating());
+        // set filter method, API cant handle multiselection
+        boolean classicFilter =  (this.movieAPI == null)|| ((years.size() > 1) || (ratings.size() > 1) || (selectedGenres.size() >1));
 
-            // Add movie if it matches all criteria and hasn't been seen before
-            if (matchesGenre && matchesQuery && matchesYear && matchesRating && seenTitles.add(movie.getTitle().toLowerCase())) {
-                filteredMovies.add(movie);
+        if (classicFilter) {
+            // Check each movie against active filters
+            for (Movie movie : allMovies) {
+                boolean matchesGenre = !hasGenres || movie.getGenreList().stream().anyMatch(selectedGenres::contains);
+                boolean matchesQuery = !hasQuery ||
+                        (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase())) ||
+                        (movie.getDescription() != null && movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase()));
+                boolean matchesYear = !hasYears || years.contains(String.valueOf(movie.getReleaseYear()));
+                boolean matchesRating = !hasRatings || ratingValues.contains(movie.getRating());
+
+                // Add movie if it matches all criteria and hasn't been seen before
+                if (matchesGenre && matchesQuery && matchesYear && matchesRating && seenTitles.add(movie.getTitle().toLowerCase())) {
+                    filteredMovies.add(movie);
+                }
             }
+        }
+        else //api filter
+        {
+            Map<String,String> queryParams = new HashMap<>();
+            queryParams.put("query",searchQuery);
+            if (hasYears) queryParams.put("releaseYear",years.get(0));
+            if (hasGenres) queryParams.put("genre",selectedGenres.get(0));
+            if (hasRatings) queryParams.put("ratingFrom",ratings.get(0));
+            filteredMovies = movieAPI.getMoviesWithParams(queryParams);
         }
         return filteredMovies;
     }
@@ -123,4 +139,7 @@ public class MovieService {
         Gson gson = new Gson();
         return gson.toJson(movies);
     }
+
+
+
 }
