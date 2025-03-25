@@ -12,9 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MovieTest {
 
-
     private Movie movie;
-
 
     @BeforeEach
     void setUp() {
@@ -25,29 +23,29 @@ public class MovieTest {
 
     @Test
     void getTitle() {
-        assertEquals(movie.getTitle(),  "Inception");
+        assertEquals("Inception", movie.getTitle());
     }
 
     @Test
     void getDescription() {
-        assertEquals(movie.getDescription(),  "A mind-bending thriller");
+        assertEquals("A mind-bending thriller", movie.getDescription());
     }
 
 
     @Test
     void getGenreList() {
-        assertEquals(movie.getGenreList(),  Arrays.asList("SCIENCE_FICTION", "THRILLER"));
+        assertEquals(Arrays.asList("SCIENCE_FICTION", "THRILLER"), movie.getGenreList());
     }
 
     @Test
     void getGenres() {
-        assertEquals(movie.getGenres(),  "SCIENCE_FICTION, THRILLER");
+        assertEquals("SCIENCE_FICTION, THRILLER", movie.getGenres());
     }
 
 
     @Test
     void initializeMoviesDummyMoviesFromJson() {
-        assertEquals(Movie.initializeMoviesDummyMoviesFromJson().size(),  25);
+        assertEquals(25, Movie.initializeMoviesDummyMoviesFromJson().size());
 
     }
 

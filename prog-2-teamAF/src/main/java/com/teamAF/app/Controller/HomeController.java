@@ -17,6 +17,7 @@ import org.controlsfx.control.CheckComboBox;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -162,7 +163,7 @@ public class HomeController implements Initializable {
         if (selectedGenres.isEmpty())
             selectedGenresLabel.setText("Selected Genres: ");
         else
-         selectedGenresLabel.setText("Selected Genres: " + String.join(", ", selectedGenres));
+            selectedGenresLabel.setText("Selected Genres: " + String.join(", ", selectedGenres));
     }
 
     // for debugging purposes in the UI
@@ -182,7 +183,6 @@ public class HomeController implements Initializable {
             selectedRatingsLabel.setText("Selected Ratings: " + String.join(", ", selectedRatings));
     }
 
-
     @FXML
     private void handleSearch(ActionEvent event) {
         String query = searchField.getText();
@@ -190,4 +190,65 @@ public class HomeController implements Initializable {
         List<String> ratings = new ArrayList<>(ratingCheckComboBox.getCheckModel().getCheckedItems());
         filterMovies(selectedGenres, query, years, ratings);
     }
+
+    /**
+     * Returns the name of the actor who appears most often across all movies' main casts. If
+     * no actor contained an error is thrown. If multiple actors are equally popular a list is returned.
+     */
+    public String getMostPopularActor(List<Movie> movies) {
+                Map<String, Long> counts = movies.stream()
+                        .flatMap(movie -> movie.getMainCast().stream())
+                        .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()));
+
+                if (counts.isEmpty()) {
+                    return "No Actors Found";
+                }
+
+                long maxActorCount = counts.values().stream()
+                        .mapToLong(Long::longValue)
+                        .max()
+                        .orElse(0L);
+
+                List<String> topActors = counts.entrySet().stream()
+                        .filter(e -> e.getValue() == maxActorCount)
+                        .map(Map.Entry::getKey)
+                        .toList();
+
+                if (topActors.size() == 1) {
+                    return topActors.get(0);
+                } else {
+                    return String.join(", ", topActors);
+                }
+    }
+
+    /**
+     * Filters out the movie with the longest title and returns the number of characters
+     * in that title.
+     */
+    public int getLongestMovieTitle(List<Movie> movies) {
+        return movies.stream()
+                .mapToInt(movie -> movie.getTitle().length())
+                .max()
+                .orElse(0);
+    }
+
+    /**
+     * Counts the number of movies directed by a specific director.
+     */
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        return movies.stream()
+                .filter(movie -> movie.getDirectors().contains(director))
+                .count();
+    }
+
+    /**
+     * Returns a list of all movies released between startYear and endYear (inclusive).
+     */
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        return movies.stream()
+                .filter(movie -> movie.getReleaseYear() >= startYear
+                        && movie.getReleaseYear() <= endYear)
+                .collect(Collectors.toList());
+    }
+
 }
