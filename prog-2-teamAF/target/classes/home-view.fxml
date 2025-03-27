@@ -10,46 +10,46 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
 
-<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.Controller.HomeController">
-   <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="347.0" spacing="20.0" style="-fx-background-color: black;">
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.Controller.HomeController">
+   <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="800.0" spacing="20.0" styleClass="background-light-black">
       <padding>
-         <Insets bottom="7.0" left="10.0" top="7.0" />
+         <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
       </padding>
       <children>
-         <Label style="-fx-background-color: F5C518;" text="FHMDb">
+         <Label styleClass="background-yellow" text="FHMDb">
             <font>
-               <Font name="Calibri Bold" size="24.0" />
+               <Font name="Segoe UI" size="28.0" />
             </font>
             <padding>
-               <Insets left="2.0" right="2.0" />
+               <Insets left="10.0" right="10.0" />
             </padding>
          </Label>
-         <Label styleClass="text-white" stylesheets="@styles.css" text="Welcome to FHMDb!" />
+         <Label styleClass="title-label" text="Welcome to FHMDb!" />
       </children>
    </HBox>
-   <HBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
+   <VBox spacing="15.0" styleClass="background-black" stylesheets="@styles.css">
+      <padding>
+         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      </padding>
       <children>
-         <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)" />
-         <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb" />
-         <CheckComboBox fx:id="genreCheckComboBox" styleClass="filter-combo-box" stylesheets="@styles.css" />
-         <CheckComboBox fx:id="yearCheckComboBox" prefHeight="25.0" prefWidth="170.0" />
-         <CheckComboBox fx:id="ratingCheckComboBox" prefHeight="25.0" prefWidth="130.0" />
-         <JFXButton fx:id="searchBtn" onAction="#handleSearch" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
-         <VBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
+         <HBox spacing="10.0" alignment="CENTER_LEFT">
             <children>
-               <Label fx:id="selectedGenresLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Genres:" wrapText="true">
-                  <VBox.margin>
-                     <Insets top="-15.0" />
-                  </VBox.margin></Label>
-               <Label fx:id="selectedYearsLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Years:" wrapText="true">
-                  <VBox.margin>
-                     <Insets />
-                  </VBox.margin>
-               </Label>
-               <Label fx:id="selectedRatingsLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Ratings:" wrapText="true" />
+               <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)" />
+               <TextField fx:id="searchField" prefHeight="35.0" prefWidth="200.0" promptText="Search FHMDb" />
+               <CheckComboBox fx:id="genreCheckComboBox" styleClass="filter-combo-box" stylesheets="@styles.css" />
+               <CheckComboBox fx:id="yearCheckComboBox" styleClass="filter-combo-box" stylesheets="@styles.css" />
+               <CheckComboBox fx:id="ratingCheckComboBox" styleClass="filter-combo-box" stylesheets="@styles.css" />
+               <JFXButton fx:id="searchBtn" onAction="#handleSearch" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
+            </children>
+         </HBox>
+         <VBox spacing="8.0">
+            <children>
+               <Label fx:id="selectedGenresLabel" styleClass="detail-label" text="Selected Genres:" wrapText="true" />
+               <Label fx:id="selectedYearsLabel" styleClass="detail-label" text="Selected Years:" wrapText="true" />
+               <Label fx:id="selectedRatingsLabel" styleClass="detail-label" text="Selected Ratings:" wrapText="true" />
             </children>
          </VBox>
       </children>
-   </HBox>
-   <JFXListView fx:id="movieListView" style="-fx-background-color: black;" styleClass="background-black" stylesheets="@styles.css" VBox.vgrow="ALWAYS" />
+   </VBox>
+   <JFXListView fx:id="movieListView" VBox.vgrow="ALWAYS" />
 </VBox>
