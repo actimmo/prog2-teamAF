@@ -89,7 +89,7 @@
     <dependency>
       <groupId>com.github.TheBloodyAmateur</groupId>
       <artifactId>EventManager</artifactId>
-      <version>v2.1.3</version>
+      <version>v2.1.8</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
