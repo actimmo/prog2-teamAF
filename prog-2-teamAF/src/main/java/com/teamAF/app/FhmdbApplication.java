@@ -1,5 +1,6 @@
 package com.teamAF.app;
 
+import com.teamAF.app.Controller.HomeController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,6 +17,11 @@ public class FhmdbApplication extends Application {
         scene.getStylesheets().add(Objects.requireNonNull(FhmdbApplication.class.getResource("/styles.css")).toExternalForm());
         stage.setTitle("FHMDb");
         stage.setScene(scene);
+        // Close the event manager when the application is closed
+        stage.setOnCloseRequest(event -> {
+            HomeController.eventManager.logInfoMessage("FHMDB Application Closed");
+            HomeController.eventManager.stopEventThread();
+        });
         stage.show();
     }
 

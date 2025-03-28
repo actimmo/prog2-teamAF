@@ -53,7 +53,7 @@ public class HomeController implements Initializable {
     private MovieService movieService;
     public ObservableList<String> selectedGenres = FXCollections.observableArrayList();
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
-    private EventManager eventManager;
+    public static EventManager eventManager;
 
     //No-Arg Constructor for FXML
     public HomeController() {
@@ -138,6 +138,8 @@ public class HomeController implements Initializable {
             updateSelectedRatingsLabel();
             handleSearch(null);
         });
+
+
     }
 
     public void sortMoviesAscending() {
