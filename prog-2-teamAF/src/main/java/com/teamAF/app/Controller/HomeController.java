@@ -3,8 +3,13 @@ package com.teamAF.app.Controller;
 import com.github.eventmanager.EventManager;
 import com.github.eventmanager.filehandlers.LogHandler;
 import com.jfoenix.controls.*;
+import com.teamAF.app.Data.DatabaseManager;
+import com.teamAF.app.Data.MovieRepository;
+import com.teamAF.app.Data.WatchlistRepository;
 import com.teamAF.app.Model.Movie;
+import com.teamAF.app.Model.MovieEntity;
 import com.teamAF.app.Model.MovieService;
+import com.teamAF.app.Model.WatchlistMovieEntity;
 import com.teamAF.app.View.MovieCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -16,6 +21,7 @@ import javafx.scene.control.*;
 import org.controlsfx.control.CheckComboBox;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,8 +65,22 @@ public class HomeController implements Initializable {
     public HomeController() {
     }
 
+    private DatabaseManager _instance;
+    private MovieRepository _movieRepo;
+    private WatchlistRepository _watchRepo;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        try {
+            _instance= DatabaseManager.getInstance();
+            _movieRepo = new MovieRepository(_instance.getMovieDao());
+            _watchRepo = new WatchlistRepository(_instance.getWatchlistDao());
+             } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
         // Initialize EventManager with INFO logging level and console output enabled
         LogHandler logHandler = new LogHandler("configPath");
         logHandler.getConfig().getEvent().setPrintToConsole(true);
@@ -80,6 +100,10 @@ public class HomeController implements Initializable {
         observableMovies.setAll(movieService.getAllMovies());
         movieListView.setItems(observableMovies);
         movieListView.setCellFactory(listView -> new MovieCell());
+
+
+
+
 
         // Initialize genreCheckComboBox with predefined genres
         ArrayList<String> genres = new ArrayList<>(Arrays.asList(
