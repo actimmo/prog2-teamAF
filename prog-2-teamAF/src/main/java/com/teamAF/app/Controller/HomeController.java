@@ -7,9 +7,7 @@ import com.teamAF.app.Data.DatabaseManager;
 import com.teamAF.app.Data.MovieRepository;
 import com.teamAF.app.Data.WatchlistRepository;
 import com.teamAF.app.Model.Movie;
-import com.teamAF.app.Model.MovieEntity;
 import com.teamAF.app.Model.MovieService;
-import com.teamAF.app.Model.WatchlistMovieEntity;
 import com.teamAF.app.View.MovieCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -18,9 +16,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import org.controlsfx.control.CheckComboBox;
-
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,6 +56,34 @@ public class HomeController implements Initializable {
     @FXML
     private Label selectedRatingsLabel;
 
+    @FXML private VBox sidebar;
+
+    @FXML private Button hamburgerBtn;
+
+    @FXML private Button closeSidebarBtn;
+
+    @FXML private Button btnHome;
+
+    @FXML private Button btnWatchlist;
+
+    @FXML private Button btnAbout;
+
+    @FXML
+    private VBox homeView;
+
+    @FXML
+    private VBox watchlistView;
+
+    @FXML
+    public JFXListView<Movie> watchlistListView;
+
+    @FXML
+    private VBox aboutView;
+
+    @FXML
+    private TextArea aboutTextArea;
+
+    private final ObservableList<Movie> watchlistMovies = FXCollections.observableArrayList();
     private MovieService movieService;
     public ObservableList<String> selectedGenres = FXCollections.observableArrayList();
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
@@ -99,9 +127,8 @@ public class HomeController implements Initializable {
         // Set all movies to observableMovies and bind to movieListView
         observableMovies.setAll(movieService.getAllMovies());
         movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(listView -> new MovieCell());
-
-
+        movieListView.setCellFactory(listView -> new MovieCell(this, false));        watchlistListView.setItems(watchlistMovies);
+        watchlistListView.setCellFactory(listView -> new MovieCell(this, true));
 
 
 
@@ -163,7 +190,80 @@ public class HomeController implements Initializable {
             handleSearch(null);
         });
 
+        // Hamburger button shows sidebar and hides itself, X appears
+        hamburgerBtn.setOnAction(e -> {
+            sidebar.setVisible(true);
+            hamburgerBtn.setVisible(false);
+            closeSidebarBtn.setVisible(true);
+        });
 
+        // X button closes sidebar and hides itself, hamburger appears
+        closeSidebarBtn.setOnAction(e -> {
+            sidebar.setVisible(false);
+            hamburgerBtn.setVisible(true);
+            closeSidebarBtn.setVisible(false);
+        });
+        btnHome.setOnAction(e -> {
+            showHome();
+            sidebar.setVisible(false);
+            hamburgerBtn.setVisible(true);
+            closeSidebarBtn.setVisible(false);
+        });
+        btnWatchlist.setOnAction(e -> {
+            showWatchlist();
+            sidebar.setVisible(false);
+            hamburgerBtn.setVisible(true);
+            closeSidebarBtn.setVisible(false);
+        });
+        btnAbout.setOnAction(e -> {
+            showAbout();
+            sidebar.setVisible(false);
+            hamburgerBtn.setVisible(true);
+            closeSidebarBtn.setVisible(false);
+        });
+        showHome();
+    }
+
+    // Show home view, hide watchlist and about
+    private void showHome() {
+        homeView.setVisible(true);
+        watchlistView.setVisible(false);
+        aboutView.setVisible(false);
+    }
+    private void showWatchlist() {
+        homeView.setVisible(false);
+        watchlistView.setVisible(true);
+        aboutView.setVisible(false);
+    }
+
+    public void addToWatchlist(Movie movie) {
+        if (!watchlistMovies.contains(movie)) {
+            watchlistMovies.add(movie);
+        }
+    }
+
+    public void removeFromWatchlist(Movie movie) {
+        watchlistMovies.remove(movie);
+        // Remove the title from the static set variable in MovieCell
+        com.teamAF.app.View.MovieCell.addedToWatchlist.remove(movie.getTitle());
+        movieListView.refresh();
+    }
+
+    private void showAbout() {
+        homeView.setVisible(false);
+        watchlistView.setVisible(false);
+        aboutView.setVisible(true);
+        try {
+            var inputStream = getClass().getResourceAsStream("/About.txt");
+            if (inputStream == null) {
+                aboutTextArea.setText("About.txt konnte nicht gefunden werden.");
+                return;
+            }
+            String aboutText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            aboutTextArea.setText(aboutText);
+        } catch (IOException e) {
+            aboutTextArea.setText("About.txt konnte nicht geladen werden.");
+        }
     }
 
     public void sortMoviesAscending() {

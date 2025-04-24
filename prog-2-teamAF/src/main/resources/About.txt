@@ -1,0 +1,12 @@
+About the Project – FHMDb (FH Movie Database)
+
+Die FHMDb ist eine JavaFX-basierte Applikation, die im Rahmen von drei aufeinander aufbauenden Übungen des Kurses Programmieren 2 entstanden ist. Ziel war es, die Konzepte moderner Softwareentwicklung wie Clean Code, Test-Driven Development, Schichtenarchitektur, Exception Handling und API-Integration hands-on umzusetzen – oder auf gut Deutsch: weniger Chaos, mehr Code mit Köpfchen.
+
+Exercise 1 legte das Fundament. Wir implementierten ein Maven-Projekt, nutzten Git für die Teamarbeit, und testeten unsere Code-Bausteine mit JUnit. Die Applikation ermöglichte es Nutzer*innen, Filme nach Titel und Genre zu filtern und alphabetisch zu sortieren. Dabei kam das MVC-Pattern zum Einsatz – Model für die Daten, View für die Anzeige, und der Controller als Chaosbändiger dazwischen.
+
+In Exercise 2 hoben wir die App auf ein neues Level, indem wir eine externe MovieAPI angebunden haben. Mithilfe von okhttp und Gson konnten Daten im JSON-Format verarbeitet und ins UI eingebunden werden. Zusätzlich wurden spezielle Auswertungen über Java Streams ermöglicht – z. B. der beliebteste Schauspieler oder die längsten Filmtitel. Und ja, alles wurde natürlich wieder brav mit Unit Tests abgesichert. Safety first, auch im Code.
+
+In Exercise 3 ging es um das große Kino der Softwarearchitektur: Eine H2-Datenbank wurde angebunden, Filme wurden persistent gespeichert und eine Watchlist-Funktion integriert. Die App konnte auch offline auf gecachte Filme zugreifen – falls die API mal wieder „Urlaub“ macht. Außerdem sorgte sauberes Exception Handling dafür, dass die App stabil bleibt und bei Fehlern mit klaren Meldungen reagiert – statt mit dem digitalen Äquivalent eines Nervenzusammenbruchs.
+
+Zusammenfassung:
+FHMDb ist mehr als nur eine Filmverwaltung – es ist unser digitales Meisterwerk mit funktionaler UI, stabiler Backend-Logik und robuster Datenhaltung. Und das alles ohne dass die App in Flammen aufgeht. Klingt banal, ist aber in der Softwareentwicklung quasi ein Ritterschlag.

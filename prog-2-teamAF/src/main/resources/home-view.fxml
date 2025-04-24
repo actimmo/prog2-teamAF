@@ -1,55 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXListView?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TextArea?>
 
-<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.Controller.HomeController">
-   <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="347.0" spacing="20.0" style="-fx-background-color: black;">
-      <padding>
-         <Insets bottom="7.0" left="10.0" top="7.0" />
-      </padding>
-      <children>
-         <Label style="-fx-background-color: F5C518;" text="FHMDb">
-            <font>
-               <Font name="Calibri Bold" size="24.0" />
-            </font>
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teamAF.app.Controller.HomeController">
+   <!-- Main content with BorderPane -->
+   <BorderPane>
+      <top>
+         <HBox alignment="CENTER_LEFT" prefHeight="42.0" spacing="20.0" style="-fx-background-color: black;">
             <padding>
-               <Insets left="2.0" right="2.0" />
+               <Insets bottom="7.0" left="10.0" top="7.0"/>
             </padding>
-         </Label>
-         <Label styleClass="text-white" stylesheets="@styles.css" text="Welcome to FHMDb!" />
-      </children>
-   </HBox>
-   <HBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
-      <children>
-         <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)" />
-         <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0" promptText="Search FHMDb" />
-         <CheckComboBox fx:id="genreCheckComboBox" styleClass="filter-combo-box" stylesheets="@styles.css" />
-         <CheckComboBox fx:id="yearCheckComboBox" prefHeight="25.0" prefWidth="170.0" />
-         <CheckComboBox fx:id="ratingCheckComboBox" prefHeight="25.0" prefWidth="130.0" />
-         <JFXButton fx:id="searchBtn" onAction="#handleSearch" styleClass="background-yellow" stylesheets="@styles.css" text="Filter" />
-         <VBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
             <children>
-               <Label fx:id="selectedGenresLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Genres:" wrapText="true">
-                  <VBox.margin>
-                     <Insets top="-15.0" />
-                  </VBox.margin></Label>
-               <Label fx:id="selectedYearsLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Years:" wrapText="true">
-                  <VBox.margin>
-                     <Insets />
-                  </VBox.margin>
+               <Label style="-fx-background-color: F5C518;" text="FHMDb">
+                  <font>
+                     <Font name="Calibri Bold" size="24.0"/>
+                  </font>
+                  <padding>
+                     <Insets left="2.0" right="2.0"/>
+                  </padding>
                </Label>
-               <Label fx:id="selectedRatingsLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Ratings:" wrapText="true" />
+               <Label styleClass="text-white" stylesheets="@styles.css" text="Welcome to FHMDb!"/>
+               <Region HBox.hgrow="ALWAYS"/>
             </children>
-         </VBox>
-      </children>
-   </HBox>
-   <JFXListView fx:id="movieListView" style="-fx-background-color: black;" styleClass="background-black" stylesheets="@styles.css" VBox.vgrow="ALWAYS" />
-</VBox>
+         </HBox>
+      </top>
+      <center>
+         <StackPane>
+            <VBox fx:id="homeView" visible="true">
+               <HBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
+                  <children>
+                     <JFXButton fx:id="sortBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Sort (asc)"/>
+                     <TextField fx:id="searchField" prefHeight="25.0" prefWidth="170.0"
+                                promptText="Search FHMDb"
+                                styleClass="custom-search-field"
+                                stylesheets="@styles.css"/>
+                     <CheckComboBox fx:id="genreCheckComboBox" styleClass="filter-combo-box custom-combo-box" stylesheets="@styles.css"/>
+                     <CheckComboBox fx:id="yearCheckComboBox" styleClass="custom-combo-box" stylesheets="@styles.css" prefHeight="25.0" prefWidth="170.0"/>
+                     <CheckComboBox fx:id="ratingCheckComboBox" styleClass="custom-combo-box" stylesheets="@styles.css" prefHeight="25.0" prefWidth="130.0"/>
+                     <JFXButton fx:id="searchBtn" onAction="#handleSearch" styleClass="background-yellow" stylesheets="@styles.css" text="Filter"/>
+                     <VBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
+                        <children>
+                           <Label fx:id="selectedGenresLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Genres:" wrapText="true">
+                              <VBox.margin>
+                                 <Insets top="-15.0"/>
+                              </VBox.margin>
+                           </Label>
+                           <Label fx:id="selectedYearsLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Years:" wrapText="true"/>
+                           <Label fx:id="selectedRatingsLabel" prefWidth="300.0" styleClass="text-white" stylesheets="@styles.css" text="Selected Ratings:" wrapText="true"/>
+                        </children>
+                     </VBox>
+                  </children>
+               </HBox>
+               <JFXListView fx:id="movieListView" style="-fx-background-color: black;" styleClass="background-black" stylesheets="@styles.css" VBox.vgrow="ALWAYS"/>
+            </VBox>
+            <VBox fx:id="watchlistView" visible="false" spacing="10" styleClass="background-black" stylesheets="@styles.css">
+               <Label text="Watchlist" styleClass="text-yellow" stylesheets="@styles.css"/>
+               <JFXListView fx:id="watchlistListView" styleClass="background-black" stylesheets="@styles.css" VBox.vgrow="ALWAYS"/>
+            </VBox>
+            <VBox fx:id="aboutView" visible="false" spacing="10" styleClass="background-black" stylesheets="@styles.css">
+               <Label text="About" styleClass="text-yellow" stylesheets="@styles.css"/>
+               <TextArea fx:id="aboutTextArea" editable="false" wrapText="true"
+                         styleClass="about-text" stylesheets="@styles.css" VBox.vgrow="ALWAYS"/>            </VBox>
+         </StackPane>
+      </center>
+   </BorderPane>
+   <!-- Hamburger and Close button always top right in StackPane -->
+   <StackPane alignment="TOP_RIGHT" pickOnBounds="false">
+      <Button fx:id="hamburgerBtn" text="≡" style="-fx-font-size: 36; -fx-background-color: transparent; -fx-text-fill: white;" visible="true"/>
+      <Button fx:id="closeSidebarBtn" text="✕" style="-fx-font-size: 32; -fx-background-color: transparent; -fx-text-fill: white;" visible="false"/>
+   </StackPane>
+   <!-- Sidebar as overlay -->
+   <VBox fx:id="sidebar"
+         visible="false"
+         style="-fx-pref-width: 150; -fx-min-width: 150; -fx-max-width: 150;"
+         styleClass="sidebar"
+         StackPane.alignment="TOP_LEFT"
+         alignment="TOP_CENTER"
+         spacing="5">
+      <Button fx:id="btnHome" text="Home" maxWidth="150" minWidth="150" styleClass="sidebar-btn"/>
+      <Button fx:id="btnWatchlist" text="Watchlist" maxWidth="150" minWidth="150" styleClass="sidebar-btn"/>
+      <Button fx:id="btnAbout" text="About" maxWidth="150" minWidth="150" styleClass="sidebar-btn"/>
+   </VBox>
+</StackPane>
