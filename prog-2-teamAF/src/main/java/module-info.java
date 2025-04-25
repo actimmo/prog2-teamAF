@@ -20,4 +20,6 @@ module com.teamAF.app {
 
     exports com.teamAF.app.Model;
     opens com.teamAF.app.Model to com.google.gson;
+    exports com.teamAF.app.Data;
+    opens com.teamAF.app.Data to com.google.gson;
 }

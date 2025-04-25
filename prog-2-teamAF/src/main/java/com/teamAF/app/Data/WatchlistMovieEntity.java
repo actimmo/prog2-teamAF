@@ -1,4 +1,4 @@
-package com.teamAF.app.Model;
+package com.teamAF.app.Data;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

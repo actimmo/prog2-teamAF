@@ -1,7 +1,6 @@
 package com.teamAF.app.Data;
 import com.j256.ormlite.dao.Dao;
 
-import com.teamAF.app.Model.MovieEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

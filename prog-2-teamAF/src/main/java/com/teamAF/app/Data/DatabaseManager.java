@@ -5,8 +5,6 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.teamAF.app.Model.MovieEntity;
-import com.teamAF.app.Model.WatchlistMovieEntity;
 
 import java.sql.SQLException;
 
@@ -38,10 +36,7 @@ public class DatabaseManager {
 
     public static DatabaseManager getTestInstance() throws SQLException {
         DB_URL = "jdbc:h2:file:./dbMovieTest";
-        if (instance == null) {
-            instance = new DatabaseManager();
-        }
-        return instance;
+        return getInstance();
     }
 
     private void createConnectionSource() throws SQLException {
@@ -57,7 +52,6 @@ public class DatabaseManager {
     }
 
     private void createTables() throws SQLException {
-
         movieDao = DaoManager.createDao(conn, MovieEntity.class);
         watchlistDao = DaoManager.createDao(conn, WatchlistMovieEntity.class);
         TableUtils.createTableIfNotExists(conn, MovieEntity.class);

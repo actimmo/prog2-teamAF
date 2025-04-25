@@ -7,7 +7,7 @@ import com.teamAF.app.Data.DatabaseManager;
 import com.teamAF.app.Data.MovieRepository;
 import com.teamAF.app.Data.WatchlistRepository;
 import com.teamAF.app.Model.Movie;
-import com.teamAF.app.Model.MovieEntity;
+import com.teamAF.app.Data.MovieEntity;
 import com.teamAF.app.Model.MovieService;
 import com.teamAF.app.View.MovieCell;
 import javafx.collections.FXCollections;
@@ -25,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-import com.teamAF.app.Controller.ClickEventHandler;
 
 public class HomeController implements Initializable {
     @FXML
@@ -102,8 +101,8 @@ public class HomeController implements Initializable {
     // Click Handler to add/remove Movies from Watchlist
     private final ClickEventHandler<Movie> onAddToWatchlistClicked = movie -> {
         try {
-            _watchRepo.addToWatchlist(toEntity(movie));   // convert here
-            addToWatchlist(movie);                        // update UI list
+            _watchRepo.addToWatchlist(toEntity(movie));
+            addToWatchlist(movie);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -112,7 +111,7 @@ public class HomeController implements Initializable {
     private final ClickEventHandler<Movie> onRemoveFromWatchlistClicked = movie -> {
         try {
             _watchRepo.removeFromWatchlist(movie.getId());
-            removeFromWatchlist(movie);                   // update UI list
+            removeFromWatchlist(movie);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -2,8 +2,6 @@ package com.teamAF.app.Data;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.teamAF.app.Model.MovieEntity;
-import com.teamAF.app.Model.WatchlistMovieEntity;
 
 import java.sql.SQLException;
 import java.util.List;
