@@ -36,6 +36,14 @@ public class DatabaseManager {
         return instance;
     }
 
+    public static DatabaseManager getTestInstance() throws SQLException {
+        DB_URL = "jdbc:h2:file:./dbMovieTest";
+        if (instance == null) {
+            instance = new DatabaseManager();
+        }
+        return instance;
+    }
+
     private void createConnectionSource() throws SQLException {
         conn = new JdbcConnectionSource(DB_URL, username, password);
     }
