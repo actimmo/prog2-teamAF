@@ -58,7 +58,7 @@ public class MovieRepository {
             }
         }
 
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
            throw new SQLException(errors.size()+" could not been added to the database.");
         }else
             return count;
