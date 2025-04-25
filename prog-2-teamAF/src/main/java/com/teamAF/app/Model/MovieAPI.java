@@ -39,6 +39,20 @@ public class MovieAPI {
         this.httpClient = httpClient;
     }
 
+    public boolean isApiAvailable() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(URL))
+                    .GET()
+                    .build();
+
+            HttpResponse<Void> response = httpClient.send(request, HttpResponse.BodyHandlers.discarding());
+
+            return response.statusCode() >= 200 && response.statusCode() < 300;
+        } catch (Exception e) {
+            return false;
+        }
+    }
     /**
      * Retrieves a list of movies from the specified URL.
      * Sends an HTTP GET request to the URL and parses the response as a list of {@link Movie} objects.

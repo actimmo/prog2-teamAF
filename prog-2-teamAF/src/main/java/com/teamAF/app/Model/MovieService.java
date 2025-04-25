@@ -80,7 +80,7 @@ public class MovieService {
         Set<Double> ratingValues = hasRatings ? ratings.stream().map(Double::parseDouble).collect(Collectors.toSet()) : Collections.emptySet();
 
         // set filter method, API cant handle multiselection
-        boolean classicFilter =  (this.movieAPI == null)|| ((years.size() > 1) || (ratings.size() > 1) || (selectedGenres.size() >1));
+        boolean classicFilter =  (this.movieAPI == null)|| (!this.movieAPI.isApiAvailable())||((years.size() > 1) || (ratings.size() > 1) || (selectedGenres.size() >1));
 
         if (classicFilter) {
             // Check each movie against active filters
