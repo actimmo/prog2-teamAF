@@ -2,14 +2,11 @@ package com.teamAF.app.Data;
 
 import com.j256.ormlite.dao.Dao;
 import com.teamAF.app.Model.Movie;
-import com.teamAF.app.Model.MovieEntity;
-import com.teamAF.app.Model.WatchlistMovieEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
