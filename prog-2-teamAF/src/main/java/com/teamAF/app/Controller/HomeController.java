@@ -7,6 +7,7 @@ import com.teamAF.app.Data.DatabaseManager;
 import com.teamAF.app.Data.MovieRepository;
 import com.teamAF.app.Data.WatchlistRepository;
 import com.teamAF.app.Model.Movie;
+import com.teamAF.app.Model.MovieEntity;
 import com.teamAF.app.Model.MovieService;
 import com.teamAF.app.View.MovieCell;
 import javafx.collections.FXCollections;
@@ -24,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.teamAF.app.Controller.ClickEventHandler;
 
 public class HomeController implements Initializable {
     @FXML
@@ -97,6 +99,25 @@ public class HomeController implements Initializable {
     private MovieRepository _movieRepo;
     private WatchlistRepository _watchRepo;
 
+    // Click Handler to add/remove Movies from Watchlist
+    private final ClickEventHandler<Movie> onAddToWatchlistClicked = movie -> {
+        try {
+            _watchRepo.addToWatchlist(toEntity(movie));   // convert here
+            addToWatchlist(movie);                        // update UI list
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    };
+
+    private final ClickEventHandler<Movie> onRemoveFromWatchlistClicked = movie -> {
+        try {
+            _watchRepo.removeFromWatchlist(movie.getId());
+            removeFromWatchlist(movie);                   // update UI list
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    };
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -124,11 +145,14 @@ public class HomeController implements Initializable {
             movieService = new MovieService(this.eventManager);
         }
 
+
+
         // Set all movies to observableMovies and bind to movieListView
         observableMovies.setAll(movieService.getAllMovies());
+        movieListView.setCellFactory(listView -> new MovieCell(onAddToWatchlistClicked));
         movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(listView -> new MovieCell(this, false));        watchlistListView.setItems(watchlistMovies);
-        watchlistListView.setCellFactory(listView -> new MovieCell(this, true));
+        watchlistListView.setItems(watchlistMovies);
+        watchlistListView.setCellFactory(listView -> new MovieCell(onRemoveFromWatchlistClicked, true));
 
 
 
@@ -147,7 +171,9 @@ public class HomeController implements Initializable {
             selectedGenres.clear();
             selectedGenres.addAll(genreCheckComboBox.getCheckModel().getCheckedItems());
             updateSelectedGenresLabel();
-            filterMovies(selectedGenres, searchField.getText(), new ArrayList<>(yearCheckComboBox.getCheckModel().getCheckedItems()), new ArrayList<>(ratingCheckComboBox.getCheckModel().getCheckedItems()));        });
+            filterMovies(selectedGenres, searchField.getText(),
+                    new ArrayList<>(yearCheckComboBox.getCheckModel().getCheckedItems()),
+                    new ArrayList<>(ratingCheckComboBox.getCheckModel().getCheckedItems()));});
 
         // Set up sort button
         sortBtn.setOnAction(actionEvent -> {
@@ -375,6 +401,21 @@ public class HomeController implements Initializable {
                 .filter(movie -> movie.getReleaseYear() >= startYear
                         && movie.getReleaseYear() <= endYear)
                 .collect(Collectors.toList());
+    }
+
+
+    // Helper: map API Movie object to persistence MovieEntity
+    private MovieEntity toEntity(Movie m) {
+        MovieEntity e = new MovieEntity();
+        e.apiId           = m.getId();
+        e.title           = m.getTitle();
+        e.description     = m.getDescription();
+        e.genres          = m.getGenres();
+        e.releaseYear     = m.getReleaseYear();
+        e.imgUrl          = m.getImgUrl();
+        e.lengthInMinutes = m.getLengthInMinutes();
+        e.rating          = m.getRating();
+        return e;
     }
 
 }

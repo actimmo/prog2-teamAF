@@ -1,6 +1,6 @@
 package com.teamAF.app.View;
 
-import com.teamAF.app.Controller.HomeController;
+import com.teamAF.app.Controller.ClickEventHandler;
 import com.teamAF.app.Model.Movie;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -24,15 +24,15 @@ public class MovieCell extends ListCell<Movie> {
     private final HBox titleBar = new HBox();
     private final VBox layout = new VBox();
     public static final java.util.Set<String> addedToWatchlist = new java.util.HashSet<>();
-    private final HomeController controller;
+    private final ClickEventHandler<Movie> clickHandler;
     private final boolean isWatchlistCell;
 
     // State for details toggle
     private boolean collapsedDetails = true;
     private VBox detailsBox;
 
-    public MovieCell(HomeController controller, boolean isWatchlistCell) {
-        this.controller = controller;
+    public MovieCell(ClickEventHandler<Movie> clickHandler, boolean isWatchlistCell) {
+        this.clickHandler = clickHandler;
         this.isWatchlistCell = isWatchlistCell;
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -64,6 +64,10 @@ public class MovieCell extends ListCell<Movie> {
 
         genre.getStyleClass().add("text-white");
         genre.setFont(Font.font("Arial", FontPosture.ITALIC, 12));
+    }
+
+    public MovieCell(ClickEventHandler<Movie> clickHandler) {
+        this(clickHandler, false);
     }
 
     /**
@@ -133,7 +137,7 @@ public class MovieCell extends ListCell<Movie> {
             if (isWatchlistCell) {
                 removeBtn.setText("Remove");
                 removeBtn.setDisable(false);
-                removeBtn.setOnAction(e -> controller.removeFromWatchlist(movie));
+                removeBtn.setOnAction(e -> clickHandler.onClick(movie));
             } else {
                 if (addedToWatchlist.contains(movie.getTitle())) {
                     watchlistBtn.setText("Added");
@@ -145,7 +149,7 @@ public class MovieCell extends ListCell<Movie> {
                         addedToWatchlist.add(movie.getTitle());
                         watchlistBtn.setText("Added");
                         watchlistBtn.setDisable(true);
-                        controller.addToWatchlist(movie);
+                        clickHandler.onClick(movie);
                     });
                 }
             }
