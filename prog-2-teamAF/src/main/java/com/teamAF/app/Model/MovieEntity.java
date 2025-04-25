@@ -6,6 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @DatabaseTable(tableName = "movies")
 public class MovieEntity {
@@ -85,5 +86,20 @@ public class MovieEntity {
             movies.add(movie);
         }
         return movies;
+    }
+
+    @Override
+    public boolean equals(Object compared) {
+        if (this == compared) return true;
+        if (compared == null || getClass() != compared.getClass()) return false;
+        MovieEntity movie = (MovieEntity) compared;
+        return releaseYear == movie.releaseYear &&
+                lengthInMinutes == movie.lengthInMinutes &&
+                Double.compare(movie.rating, rating) == 0 &&
+                Objects.equals(apiId, movie.apiId) &&
+                Objects.equals(title, movie.title) &&
+                Objects.equals(description, movie.description) &&
+                Objects.equals(genres, movie.genres) &&
+                Objects.equals(imgUrl, movie.imgUrl);
     }
 }
