@@ -2,6 +2,9 @@ package com.teamAF.app.Data;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.teamAF.app.Model.Movie;
+import com.teamAF.app.View.AutoCloseAlert;
+import javafx.scene.control.Alert;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -17,18 +20,27 @@ public class WatchlistRepository {
         return dao.queryForAll();
     }
 
-    public int addToWatchlist(MovieEntity movieEntity) throws SQLException {
+    public int addToWatchlist(MovieEntity movieEntity) throws SQLException{
+       return addToWatchlist(movieEntity.apiId);
+    }
+
+    public int addToWatchlist(Movie movie) throws SQLException{
+        return addToWatchlist(movie.getId());
+    }
+
+    public int addToWatchlist(String apiID) throws SQLException {
 
         QueryBuilder<WatchlistMovieEntity, Long> queryBuilder = dao.queryBuilder();
-        queryBuilder.where().eq("apiId", movieEntity.apiId);
+        queryBuilder.where().eq("apiId", apiID);
 
         List<WatchlistMovieEntity> result = dao.query(queryBuilder.prepare());
 
         if (!result.isEmpty()) {
             System.out.println("The apiId exists in the DAO.");
+            new AutoCloseAlert("INFO","WachListMovies","The movie is already in the Watchlist", Alert.AlertType.INFORMATION, 2).create();
         } else {
             WatchlistMovieEntity wlme = new WatchlistMovieEntity();
-            wlme.apiId = movieEntity.apiId;
+            wlme.apiId = apiID;
            return dao.create(wlme);
         }
         return -1;

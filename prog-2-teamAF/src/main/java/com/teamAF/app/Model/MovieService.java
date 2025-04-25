@@ -4,6 +4,8 @@ import com.github.eventmanager.EventManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.teamAF.app.Data.MovieEntity;
+import com.teamAF.app.Data.MovieRepository;
 import com.teamAF.app.FhmdbApplication;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,12 +23,21 @@ public class MovieService {
     private final List<Movie> allMovies;
     private EventManager eventManager;
     private MovieAPI movieAPI;
-
+    private MovieRepository movieRepository;
     // Initialize allMovies from API
-    public MovieService(EventManager eventManager) {
+    public MovieService(EventManager eventManager, MovieRepository movieRepository) throws SQLException {
         this.eventManager = eventManager;
         this.movieAPI = new MovieAPI(eventManager);
-        this.allMovies = movieAPI.getMovies();
+        List<Movie> apimovies = movieAPI.getMovies();
+        this.movieRepository = movieRepository;
+
+        if ((apimovies == null) || (apimovies.isEmpty())) {
+            this.allMovies = MovieEntity.toMovies(this.movieRepository.getAllMovies());
+        }else{
+            this.allMovies = apimovies;
+            this.movieRepository.removeAll();
+            this.movieRepository.addAllMovies(allMovies);
+        }
     }
 
     // Defensive copy for testing purposes
@@ -68,7 +80,7 @@ public class MovieService {
         Set<Double> ratingValues = hasRatings ? ratings.stream().map(Double::parseDouble).collect(Collectors.toSet()) : Collections.emptySet();
 
         // set filter method, API cant handle multiselection
-        boolean classicFilter =  (this.movieAPI == null)|| ((years.size() > 1) || (ratings.size() > 1) || (selectedGenres.size() >1));
+        boolean classicFilter =  (this.movieAPI == null)|| (!this.movieAPI.isApiAvailable())||((years.size() > 1) || (ratings.size() > 1) || (selectedGenres.size() >1));
 
         if (classicFilter) {
             // Check each movie against active filters

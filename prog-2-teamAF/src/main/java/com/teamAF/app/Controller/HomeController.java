@@ -3,12 +3,10 @@ package com.teamAF.app.Controller;
 import com.github.eventmanager.EventManager;
 import com.github.eventmanager.filehandlers.LogHandler;
 import com.jfoenix.controls.*;
-import com.teamAF.app.Data.DatabaseManager;
-import com.teamAF.app.Data.MovieRepository;
-import com.teamAF.app.Data.WatchlistRepository;
+import com.teamAF.app.Data.*;
 import com.teamAF.app.Model.Movie;
-import com.teamAF.app.Data.MovieEntity;
 import com.teamAF.app.Model.MovieService;
+import com.teamAF.app.View.AutoCloseAlert;
 import com.teamAF.app.View.MovieCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -101,8 +99,9 @@ public class HomeController implements Initializable {
     // Click Handler to add/remove Movies from Watchlist
     private final ClickEventHandler<Movie> onAddToWatchlistClicked = movie -> {
         try {
-            _watchRepo.addToWatchlist(toEntity(movie));
-            addToWatchlist(movie);
+            _watchRepo.addToWatchlist(movie);
+            refreshWatchList();
+            //addToWatchlist(movie);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -129,6 +128,8 @@ public class HomeController implements Initializable {
         }
 
 
+
+
         // Initialize EventManager with INFO logging level and console output enabled
         LogHandler logHandler = new LogHandler("configPath");
         logHandler.getConfig().getEvent().setPrintToConsole(true);
@@ -141,10 +142,21 @@ public class HomeController implements Initializable {
 
         // Initialize MovieService if not already initialized
         if (movieService == null) {
-            movieService = new MovieService(this.eventManager);
+            try {
+                movieService = new MovieService(this.eventManager, this._movieRepo);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-
+        try {
+            List< WatchlistMovieEntity> wl = _watchRepo.getWatchlist();
+            for (Movie m : movieService.getAllMovies().stream().filter(x-> wl.stream().map(w -> w.apiId).toList().contains(x.getId())).toList()){
+                com.teamAF.app.View.MovieCell.addedToWatchlist.add(m.getTitle());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         // Set all movies to observableMovies and bind to movieListView
         observableMovies.setAll(movieService.getAllMovies());
@@ -257,6 +269,7 @@ public class HomeController implements Initializable {
     }
     private void showWatchlist() {
         homeView.setVisible(false);
+        refreshWatchList();
         watchlistView.setVisible(true);
         aboutView.setVisible(false);
     }
@@ -264,6 +277,19 @@ public class HomeController implements Initializable {
     public void addToWatchlist(Movie movie) {
         if (!watchlistMovies.contains(movie)) {
             watchlistMovies.add(movie);
+        }
+    }
+
+    public void refreshWatchList(){
+        try {
+            List< WatchlistMovieEntity> wl = _watchRepo.getWatchlist();
+            watchlistMovies.clear();
+            for (Movie m : movieService.getAllMovies().stream().filter(x-> wl.stream().map(w -> w.apiId).toList().contains(x.getId())).toList()){
+                watchlistMovies.add(m);
+            }
+        } catch (Exception e) {
+            watchlistMovies.clear();
+            new AutoCloseAlert("SQL Error", "WatchListMovies", "Could not retrieve WatchListMovies", Alert.AlertType.ERROR,3).create();
         }
     }
 
