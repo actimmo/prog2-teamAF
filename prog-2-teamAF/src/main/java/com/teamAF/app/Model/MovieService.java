@@ -6,16 +6,11 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.teamAF.app.Data.MovieEntity;
 import com.teamAF.app.Data.MovieRepository;
-import com.teamAF.app.FhmdbApplication;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.teamAF.app.Exceptions.DatabaseException;
+import com.teamAF.app.Exceptions.MovieApiException;
+import javafx.scene.control.Alert;
 
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,18 +20,33 @@ public class MovieService {
     private MovieAPI movieAPI;
     private MovieRepository movieRepository;
     // Initialize allMovies from API
-    public MovieService(EventManager eventManager, MovieRepository movieRepository) throws SQLException {
+    public MovieService(EventManager eventManager, MovieRepository movieRepository) throws DatabaseException, MovieApiException {
         this.eventManager = eventManager;
         this.movieAPI = new MovieAPI(eventManager);
-        List<Movie> apimovies = movieAPI.getMovies();
+        List<Movie> apiMovies = new ArrayList<>();
+        try{
+            apiMovies = movieAPI.getMovies();
+        } catch (MovieApiException e) {
+            eventManager.logErrorMessage("Failed to fetch movies from API: " + e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(e.getClass().getSimpleName());
+            alert.setHeaderText("Failed to fetch movies from API");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
         this.movieRepository = movieRepository;
 
-        if ((apimovies == null) || (apimovies.isEmpty())) {
+        if ((apiMovies == null) || (apiMovies.isEmpty())) {
             this.allMovies = MovieEntity.toMovies(this.movieRepository.getAllMovies());
         }else{
-            this.allMovies = apimovies;
-            this.movieRepository.removeAll();
-            this.movieRepository.addAllMovies(allMovies);
+            try {
+                this.allMovies = apiMovies;
+                this.movieRepository.removeAll();
+                this.movieRepository.addAllMovies(apiMovies);
+            } catch (DatabaseException e) {
+                this.eventManager.logErrorMessage("Failed to add movies to the database: " + e.getMessage());
+                throw new DatabaseException(e.getMessage());
+            }
         }
     }
 
@@ -64,13 +74,11 @@ public class MovieService {
      * @return List of Movie objects that match all the provided filter criteria.
      *         Duplicates are removed based on case-insensitive title comparison.
      */
-    public List<Movie> filterMovies(List<String> selectedGenres, String searchQuery, List<String> years, List<String> ratings) {
+    public List<Movie> filterMovies(List<String> selectedGenres, String searchQuery, List<String> years, List<String> ratings) throws MovieApiException {
         // Set to track seen titles and avoid duplicates
         Set<String> seenTitles = new HashSet<>();
         // List to store filtered results
         List<Movie> filteredMovies = new ArrayList<>();
-
-
 
         // Check which filters are active
         boolean hasGenres = selectedGenres != null && !selectedGenres.isEmpty() && !selectedGenres.get(0).isEmpty();

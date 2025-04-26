@@ -2,6 +2,7 @@ package com.teamAF.app.Data;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.teamAF.app.Exceptions.DatabaseException;
 import com.teamAF.app.Model.Movie;
 import com.teamAF.app.View.AutoCloseAlert;
 import javafx.scene.control.Alert;
@@ -16,8 +17,12 @@ public class WatchlistRepository {
         this.dao = dao;
     }
 
-    public List<WatchlistMovieEntity> getWatchlist() throws SQLException {
-        return dao.queryForAll();
+    public List<WatchlistMovieEntity> getWatchlist() throws DatabaseException {
+        try {
+            return dao.queryForAll();
+        } catch (SQLException e) {
+            throw new DatabaseException("Could not get the watchlist from the database.");
+        }
     }
 
     public int addToWatchlist(MovieEntity movieEntity) throws SQLException{
@@ -47,17 +52,21 @@ public class WatchlistRepository {
 
     }
 
-    public int removeFromWatchlist(String apiId) throws SQLException {
-        QueryBuilder<WatchlistMovieEntity, Long> queryBuilder = dao.queryBuilder();
-        queryBuilder.where().eq("apiId", apiId);
+    public int removeFromWatchlist(String apiId) throws DatabaseException {
+        try{
+            QueryBuilder<WatchlistMovieEntity, Long> queryBuilder = dao.queryBuilder();
+            queryBuilder.where().eq("apiId", apiId);
 
-        List<WatchlistMovieEntity> result = dao.query(queryBuilder.prepare());
+            List<WatchlistMovieEntity> result = dao.query(queryBuilder.prepare());
 
-        if (!result.isEmpty()) {
-            return dao.delete(result);
-        } else {
-            System.out.println("The apiId does not exists in the DAO.");
+            if (!result.isEmpty()) {
+                return dao.delete(result);
+            } else {
+                System.out.println("The apiId does not exists in the DAO.");
+            }
+            return -1;
+        } catch (SQLException e){
+            throw new DatabaseException(e.getMessage());
         }
-        return -1;
     }
 }

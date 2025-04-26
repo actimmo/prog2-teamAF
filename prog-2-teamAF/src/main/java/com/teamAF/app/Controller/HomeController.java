@@ -2,8 +2,11 @@ package com.teamAF.app.Controller;
 
 import com.github.eventmanager.EventManager;
 import com.github.eventmanager.filehandlers.LogHandler;
+import com.github.eventmanager.filehandlers.config.OutputEntry;
 import com.jfoenix.controls.*;
 import com.teamAF.app.Data.*;
+import com.teamAF.app.Exceptions.DatabaseException;
+import com.teamAF.app.Exceptions.MovieApiException;
 import com.teamAF.app.Model.Movie;
 import com.teamAF.app.Model.MovieService;
 import com.teamAF.app.View.AutoCloseAlert;
@@ -118,38 +121,46 @@ public class HomeController implements Initializable {
         try {
             _watchRepo.removeFromWatchlist(movie.getId());
             removeFromWatchlist(movie);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (DatabaseException e) {
+            this.eventManager.logErrorMessage("DatabaseException caught: " + e.getMessage());
+            callErrorAlert(e, "Error when removing from watchlist");
         }
     };
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        try {
-            _instance = DatabaseManager.getInstance();
-            _movieRepo = new MovieRepository(_instance.getMovieDao());
-            _watchRepo = new WatchlistRepository(_instance.getWatchlistDao());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Initialize EventManager with INFO logging level and console output enabled
+        // Initialize EventManager with DEBUG logging level and console output enabled
         LogHandler logHandler = new LogHandler("configPath");
-        logHandler.getConfig().getEvent().setPrintToConsole(true);
-        logHandler.getConfig().getEvent().setInformationalMode(true);
+        logHandler.getConfig().getEvent().setDebuggingMode(true);
         logHandler.getConfig().getInternalEvents().setEnabled(false);
+
+        OutputEntry outputEntry = new OutputEntry();
+        outputEntry.setName("PrintOutput");
+        logHandler.getConfig().getOutputs().add(outputEntry);
 
         // Create EventManager instance
         this.eventManager = new EventManager(logHandler);
         eventManager.logInfoMessage("Home Controller initialized");
 
+        try {
+            _instance = DatabaseManager.getInstance();
+            _movieRepo = new MovieRepository(_instance.getMovieDao());
+            _watchRepo = new WatchlistRepository(_instance.getWatchlistDao());
+        } catch (DatabaseException e) {
+            this.eventManager.logErrorMessage("DatabaseException caught: " + e.getMessage());
+            callErrorAlert(e, "Error when initializing database");
+        }
+
         // Initialize MovieService if not already initialized
         if (movieService == null) {
             try {
                 movieService = new MovieService(this.eventManager, this._movieRepo);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            } catch (DatabaseException e) {
+                this.eventManager.logErrorMessage("DatabaseException caught: " + e.getMessage());
+                callErrorAlert(e, "Error when initializing MovieService due to database problems");
+            } catch (MovieApiException e) {
+                this.eventManager.logErrorMessage("MovieApiException caught: " + e.getMessage());
+                callErrorAlert(e, "Error when initializing MovieService due to API problems");
             }
         }
 
@@ -158,8 +169,9 @@ public class HomeController implements Initializable {
             for (Movie m : movieService.getAllMovies().stream().filter(x -> wl.stream().map(w -> w.apiId).toList().contains(x.getId())).toList()) {
                 com.teamAF.app.View.MovieCell.addedToWatchlist.add(m.getTitle());
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (DatabaseException e) {
+            this.eventManager.logErrorMessage("DatabaseException caught: " + e.getMessage());
+            callErrorAlert(e, "Error when initializing watchlist due to database problems");
         }
 
         // Set all movies to observableMovies and bind to movieListView
@@ -265,6 +277,14 @@ public class HomeController implements Initializable {
         showHome();
     }
 
+    private static void callErrorAlert(Exception e, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(e.getClass().getSimpleName());
+        alert.setHeaderText(message);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
+    }
+
     // Show home view, hide watchlist and about
     private void showHome() {
         homeView.setVisible(true);
@@ -336,7 +356,15 @@ public class HomeController implements Initializable {
 
     public void filterMovies(List<String> selectedGenres, String searchQuery, List<String> years, List<String> ratings) {
         eventManager.logInfoMessage("Filtering movies by genres - " + selectedGenres + ", search query - " + searchQuery + ", years - " + years + ", ratings - " + ratings);
-        List<Movie> filtered = movieService.filterMovies(selectedGenres, searchQuery, years, ratings);
+        List<Movie> filtered;
+        try {
+            filtered = movieService.filterMovies(selectedGenres, searchQuery, years, ratings);
+            this.eventManager.logInfoMessage("Filtered movies successfully");
+        } catch (MovieApiException e) {
+            this.eventManager.logErrorMessage(e);
+            callErrorAlert(e, "Error when filtering movies");
+            filtered = movieService.getAllMovies();
+        }
         observableMovies.setAll(filtered);
     }
 

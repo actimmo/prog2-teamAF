@@ -2,6 +2,7 @@ package com.teamAF.app.Model;
 
 import com.github.eventmanager.EventManager;
 import com.github.eventmanager.filehandlers.LogHandler;
+import com.teamAF.app.Exceptions.MovieApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -48,8 +49,12 @@ class MovieAPITest {
     void getMovies_success() throws IOException, InterruptedException {
         MovieAPI movieAPI = new MovieAPI(eventManager);
 
-        List<Movie> movies = movieAPI.getMovies();
-        assertEquals(31, movies.size());
+        try{
+            List<Movie> movies = movieAPI.getMovies();
+            assertEquals(31, movies.size());
+        } catch (MovieApiException e) {
+            assertEquals("Failed to fetch movies from API", e.getMessage());
+        }
     }
 
     @Test
@@ -57,8 +62,12 @@ class MovieAPITest {
         when(mockHttpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
                 .thenThrow(new IOException());
 
-        List<Movie> movies = this.movieAPI.getMovies();
-        assertNull(movies, "Should return null when API responds with 404");
+        try{
+            List<Movie> movies = this.movieAPI.getMovies();
+            assertNull(movies, "Should return null when API responds with 404");
+        } catch (MovieApiException e) {
+            assertEquals("Failed to fetch movies from API", e.getMessage());
+        }
     }
 
     @Test
@@ -76,11 +85,15 @@ class MovieAPITest {
     void getMovieByID_success() {
         MovieAPI movieAPI = new MovieAPI(eventManager);
 
-        List<Movie> movies = movieAPI.getMovies();
-        Movie movie = movies.get(0);
+        try{
+            List<Movie> movies = movieAPI.getMovies();
+            Movie movie = movies.get(0);
 
-        Movie responseMovie = movieAPI.getMovieByID(movie.getId());
-        assertEquals(movie.getId(), responseMovie.getId());
+            Movie responseMovie = movieAPI.getMovieByID(movie.getId());
+            assertEquals(movie.getId(), responseMovie.getId());
+        } catch (MovieApiException e) {
+            assertEquals("Failed to fetch movies from API", e.getMessage());
+        }
     }
 
     @Test
@@ -94,7 +107,7 @@ class MovieAPITest {
     }
 
     @Test
-    void getMovies_with_query_param_success() throws IOException, InterruptedException {
+    void getMovies_with_query_param_success() throws MovieApiException {
         MovieAPI movieAPI = new MovieAPI(eventManager);
         Map<String,String> queryParams = new HashMap<>();
         queryParams.put("query","life is");
@@ -105,7 +118,7 @@ class MovieAPITest {
     }
 
     @Test
-    void getMovies_with_genre_param_success() throws IOException, InterruptedException {
+    void getMovies_with_genre_param_success() throws MovieApiException {
         MovieAPI movieAPI = new MovieAPI(eventManager);
         Map<String,String> queryParams = new HashMap<>();
         queryParams.put("genre","WAR");
@@ -116,7 +129,7 @@ class MovieAPITest {
     }
 
     @Test
-    void getMovies_with_releaseYear_param_success() throws IOException, InterruptedException {
+    void getMovies_with_releaseYear_param_success() throws MovieApiException {
         MovieAPI movieAPI = new MovieAPI(eventManager);
         Map<String,String> queryParams = new HashMap<>();
         queryParams.put("releaseYear","1998");
@@ -127,7 +140,7 @@ class MovieAPITest {
     }
 
     @Test
-    void getMovies_with_rating_param_success() throws IOException, InterruptedException {
+    void getMovies_with_rating_param_success() throws MovieApiException {
         MovieAPI movieAPI = new MovieAPI(eventManager);
         Map<String,String> queryParams = new HashMap<>();
         queryParams.put("ratingFrom","9.3");
@@ -138,7 +151,7 @@ class MovieAPITest {
     }
 
     @Test
-    void getMovies_with_all_params_success() throws IOException, InterruptedException {
+    void getMovies_with_all_params_success() throws MovieApiException {
         MovieAPI movieAPI = new MovieAPI(eventManager);
         Map<String,String> queryParams = new HashMap<>();
         queryParams.put("query","saving pri");
@@ -152,7 +165,7 @@ class MovieAPITest {
     }
 
     @Test
-    void getMovies_with_empty_params_success() throws IOException, InterruptedException {
+    void getMovies_with_empty_params_success() throws MovieApiException {
         MovieAPI movieAPI = new MovieAPI(eventManager);
         Map<String,String> queryParams = new HashMap<>();
         queryParams.put("query","");

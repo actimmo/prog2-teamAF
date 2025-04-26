@@ -1,6 +1,7 @@
 package com.teamAF.app.Data;
 import com.j256.ormlite.dao.Dao;
 
+import com.teamAF.app.Exceptions.DatabaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -13,7 +14,7 @@ public class DatabaseManagerTest {
     void setUp() {
         try {
             dbm =  DatabaseManager.getTestInstance();
-        } catch (SQLException e) {
+        } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }
 
