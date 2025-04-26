@@ -89,7 +89,7 @@
     <dependency>
       <groupId>com.github.TheBloodyAmateur</groupId>
       <artifactId>EventManager</artifactId>
-      <version>v2.1.8</version>
+      <version>v3.0.0</version>
     </dependency>
 
     <dependency>

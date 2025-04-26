@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.CheckComboBox;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -55,17 +56,23 @@ public class HomeController implements Initializable {
     @FXML
     private Label selectedRatingsLabel;
 
-    @FXML private VBox sidebar;
+    @FXML
+    private VBox sidebar;
 
-    @FXML private Button hamburgerBtn;
+    @FXML
+    private Button hamburgerBtn;
 
-    @FXML private Button closeSidebarBtn;
+    @FXML
+    private Button closeSidebarBtn;
 
-    @FXML private Button btnHome;
+    @FXML
+    private Button btnHome;
 
-    @FXML private Button btnWatchlist;
+    @FXML
+    private Button btnWatchlist;
 
-    @FXML private Button btnAbout;
+    @FXML
+    private Button btnAbout;
 
     @FXML
     private VBox homeView;
@@ -120,15 +127,12 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         try {
-            _instance= DatabaseManager.getInstance();
+            _instance = DatabaseManager.getInstance();
             _movieRepo = new MovieRepository(_instance.getMovieDao());
             _watchRepo = new WatchlistRepository(_instance.getWatchlistDao());
-             } catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
-
 
         // Initialize EventManager with INFO logging level and console output enabled
         LogHandler logHandler = new LogHandler("configPath");
@@ -150,8 +154,8 @@ public class HomeController implements Initializable {
         }
 
         try {
-            List< WatchlistMovieEntity> wl = _watchRepo.getWatchlist();
-            for (Movie m : movieService.getAllMovies().stream().filter(x-> wl.stream().map(w -> w.apiId).toList().contains(x.getId())).toList()){
+            List<WatchlistMovieEntity> wl = _watchRepo.getWatchlist();
+            for (Movie m : movieService.getAllMovies().stream().filter(x -> wl.stream().map(w -> w.apiId).toList().contains(x.getId())).toList()) {
                 com.teamAF.app.View.MovieCell.addedToWatchlist.add(m.getTitle());
             }
         } catch (SQLException e) {
@@ -164,7 +168,6 @@ public class HomeController implements Initializable {
         movieListView.setItems(observableMovies);
         watchlistListView.setItems(watchlistMovies);
         watchlistListView.setCellFactory(listView -> new MovieCell(onRemoveFromWatchlistClicked, true));
-
 
 
         // Initialize genreCheckComboBox with predefined genres
@@ -184,7 +187,8 @@ public class HomeController implements Initializable {
             updateSelectedGenresLabel();
             filterMovies(selectedGenres, searchField.getText(),
                     new ArrayList<>(yearCheckComboBox.getCheckModel().getCheckedItems()),
-                    new ArrayList<>(ratingCheckComboBox.getCheckModel().getCheckedItems()));});
+                    new ArrayList<>(ratingCheckComboBox.getCheckModel().getCheckedItems()));
+        });
 
         // Set up sort button
         sortBtn.setOnAction(actionEvent -> {
@@ -267,6 +271,7 @@ public class HomeController implements Initializable {
         watchlistView.setVisible(false);
         aboutView.setVisible(false);
     }
+
     private void showWatchlist() {
         homeView.setVisible(false);
         refreshWatchList();
@@ -280,16 +285,16 @@ public class HomeController implements Initializable {
         }
     }
 
-    public void refreshWatchList(){
+    public void refreshWatchList() {
         try {
-            List< WatchlistMovieEntity> wl = _watchRepo.getWatchlist();
+            List<WatchlistMovieEntity> wl = _watchRepo.getWatchlist();
             watchlistMovies.clear();
-            for (Movie m : movieService.getAllMovies().stream().filter(x-> wl.stream().map(w -> w.apiId).toList().contains(x.getId())).toList()){
+            for (Movie m : movieService.getAllMovies().stream().filter(x -> wl.stream().map(w -> w.apiId).toList().contains(x.getId())).toList()) {
                 watchlistMovies.add(m);
             }
         } catch (Exception e) {
             watchlistMovies.clear();
-            new AutoCloseAlert("SQL Error", "WatchListMovies", "Could not retrieve WatchListMovies", Alert.AlertType.ERROR,3).create();
+            new AutoCloseAlert("SQL Error", "WatchListMovies", "Could not retrieve WatchListMovies", Alert.AlertType.ERROR, 3).create();
         }
     }
 
@@ -351,6 +356,7 @@ public class HomeController implements Initializable {
         else
             selectedYearsLabel.setText("Selected Years: " + String.join(", ", selectedYears));
     }
+
     // for debugging purposes in the UI
     private void updateSelectedRatingsLabel() {
         List<String> selectedRatings = ratingCheckComboBox.getCheckModel().getCheckedItems();
@@ -373,29 +379,29 @@ public class HomeController implements Initializable {
      * no actor contained an error is thrown. If multiple actors are equally popular a list is returned.
      */
     public String getMostPopularActor(List<Movie> movies) {
-                Map<String, Long> counts = movies.stream()
-                        .flatMap(movie -> movie.getMainCast().stream())
-                        .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()));
+        Map<String, Long> counts = movies.stream()
+                .flatMap(movie -> movie.getMainCast().stream())
+                .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()));
 
-                if (counts.isEmpty()) {
-                    return "No Actors Found";
-                }
+        if (counts.isEmpty()) {
+            return "No Actors Found";
+        }
 
-                long maxActorCount = counts.values().stream()
-                        .mapToLong(Long::longValue)
-                        .max()
-                        .orElse(0L);
+        long maxActorCount = counts.values().stream()
+                .mapToLong(Long::longValue)
+                .max()
+                .orElse(0L);
 
-                List<String> topActors = counts.entrySet().stream()
-                        .filter(e -> e.getValue() == maxActorCount)
-                        .map(Map.Entry::getKey)
-                        .toList();
+        List<String> topActors = counts.entrySet().stream()
+                .filter(e -> e.getValue() == maxActorCount)
+                .map(Map.Entry::getKey)
+                .toList();
 
-                if (topActors.size() == 1) {
-                    return topActors.get(0);
-                } else {
-                    return String.join(", ", topActors);
-                }
+        if (topActors.size() == 1) {
+            return topActors.get(0);
+        } else {
+            return String.join(", ", topActors);
+        }
     }
 
     /**
@@ -432,14 +438,14 @@ public class HomeController implements Initializable {
     // Helper: map API Movie object to persistence MovieEntity
     private MovieEntity toEntity(Movie m) {
         MovieEntity e = new MovieEntity();
-        e.apiId           = m.getId();
-        e.title           = m.getTitle();
-        e.description     = m.getDescription();
-        e.genres          = m.getGenres();
-        e.releaseYear     = m.getReleaseYear();
-        e.imgUrl          = m.getImgUrl();
+        e.apiId = m.getId();
+        e.title = m.getTitle();
+        e.description = m.getDescription();
+        e.genres = m.getGenres();
+        e.releaseYear = m.getReleaseYear();
+        e.imgUrl = m.getImgUrl();
         e.lengthInMinutes = m.getLengthInMinutes();
-        e.rating          = m.getRating();
+        e.rating = m.getRating();
         return e;
     }
 
