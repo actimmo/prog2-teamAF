@@ -112,7 +112,7 @@ public class HomeController implements Initializable {
             _watchRepo.addToWatchlist(movie);
             refreshWatchList();
             //addToWatchlist(movie);
-        } catch (SQLException e) {
+        } catch (MovieApiException e) {
             throw new RuntimeException(e);
         }
     };

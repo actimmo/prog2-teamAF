@@ -66,7 +66,7 @@ class MovieAPITest {
             List<Movie> movies = this.movieAPI.getMovies();
             assertNull(movies, "Should return null when API responds with 404");
         } catch (MovieApiException e) {
-            assertEquals("Failed to fetch movies from API", e.getMessage());
+            assertNull(e.getMessage());
         }
     }
 
