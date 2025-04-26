@@ -24,7 +24,6 @@ import org.controlsfx.control.CheckComboBox;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -307,14 +306,21 @@ public class HomeController implements Initializable {
 
     public void refreshWatchList() {
         try {
-            List<WatchlistMovieEntity> wl = _watchRepo.getWatchlist();
+            List<WatchlistMovieEntity> watchlistMovieEntityList = _watchRepo.getWatchlist();
             watchlistMovies.clear();
-            for (Movie m : movieService.getAllMovies().stream().filter(x -> wl.stream().map(w -> w.apiId).toList().contains(x.getId())).toList()) {
-                watchlistMovies.add(m);
-            }
-        } catch (Exception e) {
+            // Get all apiIds from the watchlistMovieEntityList to compare them in the next stream
+            List<String> apiIDList = watchlistMovieEntityList.stream()
+                                .map(w -> w.apiId)
+                                .toList();
+            // Get all movies from the movieService and filter them by the apiIDList
+            List<Movie> movieList = movieService.getAllMovies().stream()
+                    .filter(x -> apiIDList.contains(x.getId()))
+                    .toList();
+            watchlistMovies.addAll(movieList);
+        } catch (DatabaseException e) {
             watchlistMovies.clear();
-            new AutoCloseAlert("SQL Error", "WatchListMovies", "Could not retrieve WatchListMovies", Alert.AlertType.ERROR, 3).create();
+            this.eventManager.logErrorMessage("DatabaseException caught: " + e.getMessage());
+            callErrorAlert(e, "Error when refreshing watchlist");
         }
     }
 
