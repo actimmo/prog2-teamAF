@@ -1,6 +1,8 @@
 package com.teamAF.app.Data;
 
 import com.j256.ormlite.dao.Dao;
+import com.teamAF.app.Exceptions.DatabaseException;
+import com.teamAF.app.Exceptions.MovieApiException;
 import com.teamAF.app.Model.Movie;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,25 +52,36 @@ public class WatchlistRepositoryTest {
                 repo.removeFromWatchlist(wme.apiId);
             }
 
-        } catch (SQLException e) {
+        } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }
 
     }
 
     @Test
-    void addToWatchlistTest() throws SQLException {
-        repo.addToWatchlist(movieEntity);
-
-        Assertions.assertEquals(1, repo.getWatchlist().size());
-        Assertions.assertEquals(movieEntity.apiId, repo.getWatchlist().get(0).apiId);
+    void addToWatchlistTest() {
+        try {
+            repo.addToWatchlist(movieEntity);
+            Assertions.assertEquals(1, repo.getWatchlist().size());
+            Assertions.assertEquals(movieEntity.apiId, repo.getWatchlist().get(0).apiId);
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        } catch (MovieApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void removeFromWatchlistTest() throws SQLException {
-        repo.addToWatchlist(movieEntity);
-        Assertions.assertEquals(1, repo.getWatchlist().size());
-        repo.removeFromWatchlist(movieEntity.apiId);
-        Assertions.assertEquals(0, repo.getWatchlist().size());
+    void removeFromWatchlistTest() {
+        try {
+            repo.addToWatchlist(movieEntity);
+            Assertions.assertEquals(1, repo.getWatchlist().size());
+            repo.removeFromWatchlist(movieEntity.apiId);
+            Assertions.assertEquals(0, repo.getWatchlist().size());
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        } catch (MovieApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

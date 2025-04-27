@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.eventmanager.EventManager;
+import com.teamAF.app.Exceptions.MovieApiException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,6 +27,8 @@ public class MovieAPI {
      * The URL of the movie API service.
      */
     private static final String URL = "https://prog2.fh-campuswien.ac.at/movies";
+    public static final int SUCCESS = 200;
+    public static final int REDIRECTED = 300;
     private EventManager eventManager;
     private HttpClient httpClient;
 
@@ -48,7 +51,7 @@ public class MovieAPI {
 
             HttpResponse<Void> response = httpClient.send(request, HttpResponse.BodyHandlers.discarding());
 
-            return response.statusCode() >= 200 && response.statusCode() < 300;
+            return response.statusCode() >= SUCCESS && response.statusCode() < REDIRECTED;
         } catch (Exception e) {
             return false;
         }
@@ -61,7 +64,7 @@ public class MovieAPI {
      *
      * @return A list of {@link Movie} objects, or null if an error occurs during the request or parsing.
      */
-    public List<Movie> getMovies() {
+    public List<Movie> getMovies() throws MovieApiException {
         HttpResponse<String> response;
         HttpClient client = this.httpClient;
 
@@ -72,7 +75,7 @@ public class MovieAPI {
                     .build();
             // Send request and get response
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == SUCCESS) {
                 this.eventManager.logInfoMessage("Successfully retrieved movies.");
                 return loadJSON(response);
             } else {
@@ -81,19 +84,18 @@ public class MovieAPI {
             }
         } catch (ConnectException e){
             this.eventManager.logErrorMessage("Connection failed");
-            return null;
+            throw new MovieApiException(e.getMessage());
         } catch (IOException e) {
             this.eventManager.logErrorMessage("IO Exception");
-            return null;
+            throw new MovieApiException(e.getMessage());
         } catch (InterruptedException e) {
             this.eventManager.logErrorMessage("Interrupted Exception");
-            return null;
+            throw new MovieApiException(e.getMessage());
         } catch (IllegalArgumentException e){
             this.eventManager.logErrorMessage("Invalid URL");
-            return null;
+            throw new MovieApiException(e.getMessage());
         }
     }
-
 
     /**
      * Retrieves a list of movies from the specified URL.
@@ -105,7 +107,7 @@ public class MovieAPI {
      *
      * @return A list of {@link Movie} objects, or null if an error occurs during the request or parsing.
      */
-    public List<Movie> getMoviesWithParams(Map<String, String> queryParams) {
+    public List<Movie> getMoviesWithParams(Map<String, String> queryParams) throws MovieApiException {
         HttpResponse<String> response;
         HttpClient client = this.httpClient;
 
@@ -130,25 +132,25 @@ public class MovieAPI {
 
             // Send request and get response
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == SUCCESS) {
                 this.eventManager.logInfoMessage("Successfully retrieved movies with parameters.");
                 return loadJSON(response);
             } else {
                 logFailedResponseCode(response);
                 return null;
             }
-        }  catch (ConnectException e) {
+        } catch (ConnectException e){
             this.eventManager.logErrorMessage("Connection failed");
-            return null;
+            throw new MovieApiException(e.getMessage());
         } catch (IOException e) {
             this.eventManager.logErrorMessage("IO Exception");
-            return null;
+            throw new MovieApiException(e.getMessage());
         } catch (InterruptedException e) {
             this.eventManager.logErrorMessage("Interrupted Exception");
-            return null;
-        } catch (IllegalArgumentException e) {
+            throw new MovieApiException(e.getMessage());
+        } catch (IllegalArgumentException e){
             this.eventManager.logErrorMessage("Invalid URL");
-            return null;
+            throw new MovieApiException(e.getMessage());
         }
     }
 
@@ -172,7 +174,7 @@ public class MovieAPI {
                     .build();
             // Send request and get response
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == SUCCESS) {
                 this.eventManager.logInfoMessage("Successfully retrieved movie with ID: " + id);
                 return new ObjectMapper().readValue(response.body(), Movie.class);
             } else {

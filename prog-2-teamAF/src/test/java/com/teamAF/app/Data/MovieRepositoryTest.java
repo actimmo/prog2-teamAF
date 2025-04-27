@@ -1,6 +1,7 @@
 package com.teamAF.app.Data;
 
 import com.j256.ormlite.dao.Dao;
+import com.teamAF.app.Exceptions.DatabaseException;
 import com.teamAF.app.Model.Movie;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,28 +49,28 @@ public class MovieRepositoryTest {
             repo = new MovieRepository(dao);
             repo.removeAll();
             repo.addAllMovies(Arrays.asList(movie));
-        } catch (SQLException e) {
+        } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }
 
     }
 
     @Test
-    void getAllMoviesTest() throws SQLException {
+    void getAllMoviesTest() throws DatabaseException {
 
         List<MovieEntity> list = repo.getAllMovies();
         Assertions.assertEquals(movieEntity,list.get(0));
     }
 
     @Test
-    void getRemoveAllTest() throws SQLException {
+    void getRemoveAllTest() throws DatabaseException {
 
         repo.removeAll();
         Assertions.assertTrue(repo.getAllMovies().isEmpty());
     }
 
     @Test
-    void addMovieTest() throws SQLException {
+    void addMovieTest() throws DatabaseException {
         repo.removeAll();
         Assertions.assertTrue(repo.getAllMovies().isEmpty());
         repo.addAllMovies(Arrays.asList(movie));
@@ -88,7 +89,4 @@ public class MovieRepositoryTest {
         Assertions.assertEquals(movieEntity,repo.getMovie(movieEntity));
 
     }
-
-
-
 }

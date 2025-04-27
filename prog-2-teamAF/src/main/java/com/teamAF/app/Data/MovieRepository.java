@@ -2,6 +2,7 @@ package com.teamAF.app.Data;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.teamAF.app.Exceptions.DatabaseException;
 import com.teamAF.app.Model.Movie;
 
 import java.sql.SQLException;
@@ -15,14 +16,22 @@ public class MovieRepository {
         this.dao = dao;
     }
 
-    public List<MovieEntity> getAllMovies() throws SQLException {
+    public List<MovieEntity> getAllMovies() throws DatabaseException {
         List<MovieEntity> list = new ArrayList<MovieEntity>();
-        list.addAll( dao.queryForAll());
+        try {
+            list.addAll( dao.queryForAll());
+        } catch (SQLException e) {
+            throw new DatabaseException("Add all movies to the database failed.");
+        }
         return list;
     }
 
-    public int removeAll() throws SQLException {
-        return dao.delete(dao.queryForAll());
+    public int removeAll() throws DatabaseException {
+        try{
+            return dao.delete(dao.queryForAll());
+        }catch (SQLException e){
+            throw new DatabaseException("Could not remove all movies from the database.");
+        }
     }
     public MovieEntity getMovie(MovieEntity movie) throws SQLException {
         return getMovie(movie.apiId);
@@ -44,7 +53,7 @@ public class MovieRepository {
         throw new SQLException("The apiId does not exists in the DAO.");
     }
 
-    public int addAllMovies(List<Movie> movies) throws SQLException {
+    public int addAllMovies(List<Movie> movies) throws DatabaseException {
         List<MovieEntity> errors = new ArrayList<>();
         int count = 0;
         for (MovieEntity movEnt : MovieEntity.fromMovies(movies)){
@@ -57,7 +66,8 @@ public class MovieRepository {
         }
 
         if (!errors.isEmpty()) {
-           throw new SQLException(errors.size()+" could not been added to the database.");
+           //throw new SQLException(errors.size()+" could not been added to the database.");
+            throw new DatabaseException(errors.size()+" could not been added to the database.");
         }else
             return count;
     }

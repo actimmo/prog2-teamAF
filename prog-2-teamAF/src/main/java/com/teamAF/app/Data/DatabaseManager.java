@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.teamAF.app.Exceptions.DatabaseException;
 
 import java.sql.SQLException;
 
@@ -22,25 +23,29 @@ public class DatabaseManager {
 
     private static DatabaseManager instance;
 
-    private  DatabaseManager() throws SQLException {
+    private  DatabaseManager() throws DatabaseException {
         createConnectionSource();
         createTables();
     }
 
-    public static DatabaseManager getInstance() throws SQLException {
+    public static DatabaseManager getInstance() throws DatabaseException {
         if (instance == null) {
             instance = new DatabaseManager();
         }
         return instance;
     }
 
-    public static DatabaseManager getTestInstance() throws SQLException {
+    public static DatabaseManager getTestInstance() throws DatabaseException {
         DB_URL = "jdbc:h2:file:./dbMovieTest";
         return getInstance();
     }
 
-    private void createConnectionSource() throws SQLException {
-        conn = new JdbcConnectionSource(DB_URL, username, password);
+    private void createConnectionSource() throws DatabaseException {
+        try {
+            conn = new JdbcConnectionSource(DB_URL, username, password);
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
     }
 
     public Dao<MovieEntity, Long> getMovieDao() {
@@ -51,11 +56,15 @@ public class DatabaseManager {
         return watchlistDao;
     }
 
-    private void createTables() throws SQLException {
-        movieDao = DaoManager.createDao(conn, MovieEntity.class);
-        watchlistDao = DaoManager.createDao(conn, WatchlistMovieEntity.class);
-        TableUtils.createTableIfNotExists(conn, MovieEntity.class);
-        TableUtils.createTableIfNotExists(conn, WatchlistMovieEntity.class);
+    private void createTables() throws DatabaseException {
+        try{
+            movieDao = DaoManager.createDao(conn, MovieEntity.class);
+            watchlistDao = DaoManager.createDao(conn, WatchlistMovieEntity.class);
+            TableUtils.createTableIfNotExists(conn, MovieEntity.class);
+            TableUtils.createTableIfNotExists(conn, WatchlistMovieEntity.class);
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
 
     }
 }

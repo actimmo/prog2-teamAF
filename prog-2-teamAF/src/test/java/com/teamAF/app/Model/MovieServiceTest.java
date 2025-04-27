@@ -1,6 +1,7 @@
 package com.teamAF.app.Model;
 
 import com.google.gson.*;
+import com.teamAF.app.Exceptions.MovieApiException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -112,114 +113,159 @@ public class MovieServiceTest {
 
     @Test
     void filterMovies_withMatchingTitle() {
-        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Matrix",
-                Collections.emptyList(), Collections.emptyList());
+        try{
+            List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Matrix",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(1, filtered.size());
+            assertEquals("The Matrix", filtered.get(0).getTitle());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
 
-        assertEquals(1, filtered.size());
-        assertEquals("The Matrix", filtered.get(0).getTitle());
     }
 
     @Test
     void filterMovies_withMatchingDescription() {
-        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "hacker",
-                Collections.emptyList(), Collections.emptyList());
-
-        assertEquals(1, filtered.size());
-        assertEquals("The Matrix", filtered.get(0).getTitle());
+        try {
+            List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "hacker",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(1, filtered.size());
+            assertEquals("The Matrix", filtered.get(0).getTitle());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withPartialMatch() {
-        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Dark",
-                Collections.emptyList(), Collections.emptyList());
-
-        assertEquals(1, filtered.size());
-        assertEquals("The Dark Knight", filtered.get(0).getTitle());
+        try {
+            List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Dark",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(1, filtered.size());
+            assertEquals("The Dark Knight", filtered.get(0).getTitle());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withNoMatch() {
-        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "nonexistant",
-                Collections.emptyList(), Collections.emptyList());
-
-        assertEquals(0, filtered.size());
+        try{
+            List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "nonexistant",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(0, filtered.size());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withEmptyQuery() {
-        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "",
-                Collections.emptyList(), Collections.emptyList());
-
-        assertEquals(5, filtered.size());
+        try{
+            List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(5, filtered.size());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withMatchingGenreAndQuery() {
-        List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION"), "Matrix",
-                Collections.emptyList(), Collections.emptyList());
-
-        assertEquals(1, filtered.size());
-        assertEquals("The Matrix", filtered.get(0).getTitle());
+        try{
+            List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION"), "Matrix",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(1, filtered.size());
+            assertEquals("The Matrix", filtered.get(0).getTitle());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withNoMatchingGenreAndQuery() {
-        List<Movie> filtered = movieService.filterMovies(List.of("COMEDY"), "Matrix",
-                Collections.emptyList(), Collections.emptyList());
-
-        assertEquals(0, filtered.size());
+        try{
+            List<Movie> filtered = movieService.filterMovies(List.of("COMEDY"), "Matrix",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(0, filtered.size());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withMatchingGenreOnly() {
-        List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION"), "",
-                Collections.emptyList(), Collections.emptyList());
+        try{
+            List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION"), "",
+                    Collections.emptyList(), Collections.emptyList());
 
-        // In the test data, that should match "Inception" and "The Matrix"
-        assertEquals(2, filtered.size());
-        assertEquals("Inception", filtered.get(0).getTitle());
-        assertEquals("The Matrix", filtered.get(1).getTitle());
+            // In the test data, that should match "Inception" and "The Matrix"
+            assertEquals(2, filtered.size());
+            assertEquals("Inception", filtered.get(0).getTitle());
+            assertEquals("The Matrix", filtered.get(1).getTitle());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withMatchingQueryOnly() {
-        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Matrix",
-                Collections.emptyList(), Collections.emptyList());
+        try{
+            List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "Matrix",
+                    Collections.emptyList(), Collections.emptyList());
 
-        assertEquals(1, filtered.size());
-        assertEquals("The Matrix", filtered.get(0).getTitle());
+            assertEquals(1, filtered.size());
+            assertEquals("The Matrix", filtered.get(0).getTitle());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withEmptyGenreAndQuery() {
-        List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "",
-                Collections.emptyList(), Collections.emptyList());
+        try{
+            List<Movie> filtered = movieService.filterMovies(Collections.emptyList(), "",
+                    Collections.emptyList(), Collections.emptyList());
 
-        assertEquals(5, filtered.size());
+            assertEquals(5, filtered.size());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_with2Genres() {
-        List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION", "ACTION"), "",
-                Collections.emptyList(), Collections.emptyList());
-        assertEquals(3, filtered.size());
-        assertEquals("Inception", filtered.get(0).getTitle());
-        assertEquals("The Dark Knight", filtered.get(1).getTitle());
-        assertEquals("The Matrix", filtered.get(2).getTitle());
+        try{
+            List<Movie> filtered = movieService.filterMovies(List.of("SCIENCE_FICTION", "ACTION"), "",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(3, filtered.size());
+            assertEquals("Inception", filtered.get(0).getTitle());
+            assertEquals("The Dark Knight", filtered.get(1).getTitle());
+            assertEquals("The Matrix", filtered.get(2).getTitle());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withNoMatchingGenreAndEmptyQuery() {
-        List<Movie> filtered = movieService.filterMovies(List.of("ANIMATION"), "",
-                Collections.emptyList(), Collections.emptyList());
-        assertEquals(0, filtered.size());
+        try{
+            List<Movie> filtered = movieService.filterMovies(List.of("ANIMATION"), "",
+                    Collections.emptyList(), Collections.emptyList());
+            assertEquals(0, filtered.size());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Test
     void filterMovies_withNoMatchingGenreAndMatchingQuery() {
-        List<Movie> filtered = movieService.filterMovies(List.of("ANIMATION"), "Matrix",
-                Collections.emptyList(), Collections.emptyList()); {
+        try{
+            List<Movie> filtered = movieService.filterMovies(List.of("ANIMATION"), "Matrix",
+                    Collections.emptyList(), Collections.emptyList());
             assertEquals(0, filtered.size());
+        } catch (MovieApiException e) {
+            throw new AssertionError(e);
         }
     }
 
