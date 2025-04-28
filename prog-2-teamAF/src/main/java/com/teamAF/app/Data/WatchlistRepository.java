@@ -45,7 +45,7 @@ public class WatchlistRepository {
             List<WatchlistMovieEntity> result = dao.query(queryBuilder.prepare());
             if (!result.isEmpty()) {
                 System.out.println("The apiId exists in the DAO.");
-                new AutoCloseAlert("INFO", "WachListMovies", "The movie is already in the Watchlist", Alert.AlertType.INFORMATION, 2).create();
+                new AutoCloseAlert("INFO", "WachListMovies", "The movie is already in the Watchlist", Alert.AlertType.INFORMATION, 5).create();
             } else {
                 WatchlistMovieEntity watchListMovieEntity = new WatchlistMovieEntity();
                 watchListMovieEntity.apiId = apiID;
