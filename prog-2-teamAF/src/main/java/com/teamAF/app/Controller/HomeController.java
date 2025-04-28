@@ -112,7 +112,8 @@ public class HomeController implements Initializable {
             refreshWatchList();
             //addToWatchlist(movie);
         } catch (MovieApiException e) {
-            throw new RuntimeException(e);
+            this.eventManager.logErrorMessage("DatabaseException caught: " + e.getMessage());
+            callErrorAlert(e, "Error when adding to watchlist");
         }
     };
 
