@@ -9,6 +9,7 @@ import com.teamAF.app.Exceptions.DatabaseException;
 import com.teamAF.app.Exceptions.MovieApiException;
 import com.teamAF.app.Model.Movie;
 import com.teamAF.app.Model.MovieService;
+import com.teamAF.app.Model.enums.MyEnum;
 import com.teamAF.app.View.AutoCloseAlert;
 import com.teamAF.app.View.MovieCell;
 import javafx.collections.FXCollections;
@@ -20,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.CheckComboBox;
+import com.teamAF.app.Interfaces.Observer;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HomeController implements Initializable {
+public class HomeController implements Initializable, Observer {
     @FXML
     public JFXButton searchBtn;
 
@@ -109,9 +111,9 @@ public class HomeController implements Initializable {
     private final ClickEventHandler<Movie> onAddToWatchlistClicked = movie -> {
         try {
             _watchRepo.addToWatchlist(movie);
-            refreshWatchList();
+            //refreshWatchList();
             //addToWatchlist(movie);
-        } catch (MovieApiException e) {
+        } catch (DatabaseException e) {
             this.eventManager.logErrorMessage("DatabaseException caught: " + e.getMessage());
             callErrorAlert(e, "Error when adding to watchlist");
         }
@@ -180,6 +182,9 @@ public class HomeController implements Initializable {
         movieListView.setItems(observableMovies);
         watchlistListView.setItems(watchlistMovies);
         watchlistListView.setCellFactory(listView -> new MovieCell(onRemoveFromWatchlistClicked, true));
+
+        // add to oberserver
+        _watchRepo.addObserver(this);
 
 
         // Initialize genreCheckComboBox with predefined genres
@@ -294,7 +299,7 @@ public class HomeController implements Initializable {
 
     private void showWatchlist() {
         homeView.setVisible(false);
-        refreshWatchList();
+        //refreshWatchList();
         watchlistView.setVisible(true);
         aboutView.setVisible(false);
     }
@@ -483,5 +488,25 @@ public class HomeController implements Initializable {
         e.rating = m.getRating();
         return e;
     }
+
+    @Override
+    public void update(String apiID, MyEnum.RepoResponseCode responseCode) {
+        switch(responseCode) {
+            case ALREADY_EXISTS -> showWatchlistAlert("Film bereits in Watchlist.");
+            case ERROR -> showWatchlistAlert("Fehler beim Bearbeiten.");
+            case NOT_FOUND -> showWatchlistAlert("Film nicht gefunden.");
+        }
+
+        refreshWatchList();
+    }
+
+    private void showWatchlistAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Watchlist");
+        alert.setHeaderText("Watchlist");
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
 }
