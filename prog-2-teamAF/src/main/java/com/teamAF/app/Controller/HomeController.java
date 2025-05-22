@@ -146,8 +146,8 @@ public class HomeController implements Initializable, Observer {
 
         try {
             _instance = DatabaseManager.getInstance();
-            _movieRepo = new MovieRepository(_instance.getMovieDao());
-            _watchRepo = new WatchlistRepository(_instance.getWatchlistDao());
+            _movieRepo = MovieRepository.getInstance(_instance.getMovieDao());
+            _watchRepo = WatchlistRepository.getInstance(_instance.getWatchlistDao());
         } catch (DatabaseException e) {
             this.eventManager.logErrorMessage("DatabaseException caught: " + e.getMessage());
             callErrorAlert(e, "Error when initializing database");

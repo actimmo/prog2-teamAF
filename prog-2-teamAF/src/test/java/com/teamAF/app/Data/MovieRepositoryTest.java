@@ -46,7 +46,7 @@ public class MovieRepositoryTest {
         try {
             dbm =  DatabaseManager.getTestInstance();
             dao = dbm.getMovieDao();
-            repo = new MovieRepository(dao);
+            repo = MovieRepository.getInstance(dao);
             repo.removeAll();
             repo.addAllMovies(Arrays.asList(movie));
         } catch (DatabaseException e) {

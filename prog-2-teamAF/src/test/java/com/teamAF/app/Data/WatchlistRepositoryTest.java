@@ -47,7 +47,7 @@ public class WatchlistRepositoryTest {
         try {
             dbm =  DatabaseManager.getTestInstance();
             dao = dbm.getWatchlistDao();
-            repo = new WatchlistRepository(dao);
+            repo = WatchlistRepository.getInstance(dao);
             for (WatchlistMovieEntity wme : repo.getWatchlist()){
                 repo.removeFromWatchlist(wme.apiId);
             }
@@ -66,8 +66,6 @@ public class WatchlistRepositoryTest {
             Assertions.assertEquals(movieEntity.apiId, repo.getWatchlist().get(0).apiId);
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
-        } catch (MovieApiException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -79,8 +77,6 @@ public class WatchlistRepositoryTest {
             repo.removeFromWatchlist(movieEntity.apiId);
             Assertions.assertEquals(0, repo.getWatchlist().size());
         } catch (DatabaseException e) {
-            throw new RuntimeException(e);
-        } catch (MovieApiException e) {
             throw new RuntimeException(e);
         }
     }

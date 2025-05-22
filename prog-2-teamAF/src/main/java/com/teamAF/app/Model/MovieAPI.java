@@ -98,100 +98,96 @@ public class MovieAPI {
     }
 
     /**
-     * Retrieves a list of movies from the specified URL.
-     * Sends an HTTP GET request to the URL and parses the response as a list of {@link Movie} objects.
-     * If the request is successful (status code 200), the response body is parsed into a list of {@link Movie} objects.
-     * If the request fails, an appropriate error message is logged, and null is returned.
+     * Retrieves a list of movies from the API based on the provided query parameters.
+     * Constructs a URL using the `MovieAPIRequestBuilder` with the given parameters,
+     * sends an HTTP GET request, and parses the response into a list of `Movie` objects.
+     * If the request fails, appropriate error messages are logged, and an exception is thrown.
      *
-     * @param queryParams a Map which could contain all the query params
-     *
-     * @return A list of {@link Movie} objects, or null if an error occurs during the request or parsing.
+     * @param queryParams A map containing query parameters such as "query", "genre", "releaseYear", and "ratingFrom".
+     * @return A list of `Movie` objects that match the query parameters, or null if the request fails.
+     * @throws MovieApiException If an error occurs during the request or response processing.
      */
     public List<Movie> getMoviesWithParams(Map<String, String> queryParams) throws MovieApiException {
         HttpResponse<String> response;
-        HttpClient client = this.httpClient;
-
         try {
-            String queryString = queryParams.entrySet().stream()
-                    .map(entry -> {
-                        try {
-                            return URLEncoder.encode(entry.getKey(), "UTF-8") + "=" + URLEncoder.encode(entry.getValue(), "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            this.eventManager.logErrorMessage("UnsupportedEncodingException");
-                            return "";
-                        }
-                    })
-                    .collect(Collectors.joining("&"));
+            // Build the URL with the provided query parameters
+            String url = new MovieAPIRequestBuilder(URL)
+                    .debug() // Debug-Modus aktivieren
+                    .query(queryParams.get("query"))
+                    .genre(queryParams.get("genre"))
+                    .releaseYear(queryParams.get("releaseYear"))
+                    .ratingFrom(queryParams.get("ratingFrom"))
+                    .build();
 
-            String urlWithParams = URL + "?" + queryString;
-
+            // Create an HTTP GET request with the constructed URL
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(urlWithParams))
+                    .uri(URI.create(url))
                     .GET()
                     .build();
 
-            // Send request and get response
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            // Send the request and capture the response
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Check if the response status code indicates success
             if (response.statusCode() == SUCCESS) {
                 this.eventManager.logInfoMessage("Successfully retrieved movies with parameters.");
+                // Parse the response body into a list of Movie objects
                 return loadJSON(response);
             } else {
+                // Log an error message for non-successful status codes
                 logFailedResponseCode(response);
                 return null;
             }
-        } catch (ConnectException e){
+        } catch (ConnectException e) {
+            // Log and throw an exception if the connection fails
             this.eventManager.logErrorMessage("Connection failed");
             throw new MovieApiException(e.getMessage());
-        } catch (IOException e) {
-            this.eventManager.logErrorMessage("IO Exception");
-            throw new MovieApiException(e.getMessage());
-        } catch (InterruptedException e) {
-            this.eventManager.logErrorMessage("Interrupted Exception");
-            throw new MovieApiException(e.getMessage());
-        } catch (IllegalArgumentException e){
-            this.eventManager.logErrorMessage("Invalid URL");
+        } catch (IOException | InterruptedException | IllegalArgumentException e) {
+            // Log and throw an exception for other errors
+            this.eventManager.logErrorMessage(e.getClass().getSimpleName());
             throw new MovieApiException(e.getMessage());
         }
     }
 
     /**
-     * Retrieves a movie by its ID from the specified URL.
-     * Sends an HTTP GET request to the URL with the movie ID and parses the response as a {@link Movie} object.
-     * If the request is successful (status code 200), the response body is parsed into a {@link Movie} object.
+     * Retrieves a movie by its unique ID from the API.
+     * Constructs a URL using the `MovieAPIRequestBuilder` with the given ID,
+     * sends an HTTP GET request, and parses the response into a `Movie` object.
      * If the request fails, an appropriate error message is logged, and null is returned.
      *
-     * @param id The ID of the movie to retrieve.
-     * @return A {@link Movie} object, or null if an error occurs during the request or parsing.
+     * @param id The unique identifier of the movie to retrieve.
+     * @return A `Movie` object corresponding to the given ID, or null if the request fails.
      */
     public Movie getMovieByID(String id) {
         HttpResponse<String> response;
-        HttpClient client = this.httpClient;
-
         try {
+            // Build the URL with the provided movie ID
+            String url = new MovieAPIRequestBuilder(URL + "/" + id)
+                    .debug() // Debug-Modus aktivieren
+                    .build();
+
+            // Create an HTTP GET request with the constructed URL
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(URL + "/" + id))
+                    .uri(URI.create(url))
                     .GET()
                     .build();
-            // Send request and get response
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Send the request and capture the response
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Check if the response status code indicates success
             if (response.statusCode() == SUCCESS) {
                 this.eventManager.logInfoMessage("Successfully retrieved movie with ID: " + id);
+                // Parse the response body into a Movie object
                 return new ObjectMapper().readValue(response.body(), Movie.class);
             } else {
+                // Log an error message for non-successful status codes
                 logFailedResponseCode(response);
                 return null;
             }
-        } catch (ConnectException e){
-            this.eventManager.logErrorMessage("Connection failed");
-            return null;
-        } catch (IOException e) {
-            this.eventManager.logErrorMessage("IO Exception");
-            return null;
-        } catch (InterruptedException e) {
-            this.eventManager.logErrorMessage("Interrupted Exception");
-            return null;
-        } catch (IllegalArgumentException e){
-            this.eventManager.logErrorMessage("Invalid URL");
+        } catch (Exception e) {
+            // Log and return null if an exception occurs
+            this.eventManager.logErrorMessage(e.getClass().getSimpleName());
             return null;
         }
     }
@@ -231,6 +227,5 @@ public class MovieAPI {
             default:
                 this.eventManager.logErrorMessage("Unknown error - " + response.statusCode());
         }
-
     }
 }
