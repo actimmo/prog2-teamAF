@@ -10,7 +10,6 @@ import com.teamAF.app.Exceptions.MovieApiException;
 import com.teamAF.app.Model.Movie;
 import com.teamAF.app.Model.MovieService;
 import com.teamAF.app.Model.enums.MyEnum;
-import com.teamAF.app.View.AutoCloseAlert;
 import com.teamAF.app.View.MovieCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -144,6 +143,8 @@ public class HomeController implements Initializable, Observer {
         this.eventManager = new EventManager(logHandler);
         eventManager.logInfoMessage("Home Controller initialized");
 
+        MovieSortingContext movieSortingContext = new MovieSortingContext();
+
         try {
             _instance = DatabaseManager.getInstance();
             _movieRepo = MovieRepository.getInstance(_instance.getMovieDao());
@@ -211,10 +212,10 @@ public class HomeController implements Initializable, Observer {
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortBtn.setText("Sort (desc)");
-                sortMoviesAscending();
+                movieSortingContext.switchOrder();
             } else {
                 sortBtn.setText("Sort (asc)");
-                sortMoviesDescending();
+                movieSortingContext.switchOrder();
             }
         });
 
@@ -316,8 +317,8 @@ public class HomeController implements Initializable, Observer {
             watchlistMovies.clear();
             // Get all apiIds from the watchlistMovieEntityList to compare them in the next stream
             List<String> apiIDList = watchlistMovieEntityList.stream()
-                                .map(w -> w.apiId)
-                                .toList();
+                    .map(w -> w.apiId)
+                    .toList();
             // Get all movies from the movieService and filter them by the apiIDList
             List<Movie> movieList = movieService.getAllMovies().stream()
                     .filter(x -> apiIDList.contains(x.getId()))
@@ -354,7 +355,7 @@ public class HomeController implements Initializable, Observer {
         }
     }
 
-    public void sortMoviesAscending() {
+    /*public void sortMoviesAscending() {
         eventManager.logInfoMessage("Sorting movies in ascending order");
         List<Movie> sorted = movieService.sortMoviesAscending(observableMovies);
         observableMovies.setAll(sorted);
@@ -364,7 +365,7 @@ public class HomeController implements Initializable, Observer {
         eventManager.logInfoMessage("Sorting movies in descending order");
         List<Movie> sorted = movieService.sortMoviesDescending(observableMovies);
         observableMovies.setAll(sorted);
-    }
+    }*/
 
     public void filterMovies(List<String> selectedGenres, String searchQuery, List<String> years, List<String> ratings) {
         eventManager.logInfoMessage("Filtering movies by genres - " + selectedGenres + ", search query - " + searchQuery + ", years - " + years + ", ratings - " + ratings);
@@ -508,5 +509,52 @@ public class HomeController implements Initializable, Observer {
         alert.showAndWait();
     }
 
+    /**
+     * The MovieSortingContext class is used to manage the state of the movie sorting process.
+     */
+    private class MovieSortingContext{
+        private State currentState;
 
+        public MovieSortingContext() {
+            this.currentState = new UnsortedState();
+            eventManager.logInfoMessage("Movies displayed in unsorted order");
+        }
+
+        private interface State{
+            void handle();
+        }
+
+        private class UnsortedState implements State {
+            @Override
+            public void handle() {
+                MovieSortingContext.this.currentState = new AscendingState();
+                MovieSortingContext.this.currentState.handle();
+            }
+        }
+
+        private class AscendingState implements State {
+            @Override
+            public void handle() {
+                eventManager.logInfoMessage("Sorting movies in ascending order");
+                List<Movie> sorted = movieService.sortMoviesAscending(observableMovies);
+                observableMovies.setAll(sorted);
+                MovieSortingContext.this.currentState = new DescendingState();
+            }
+        }
+
+        private class DescendingState implements State {
+            @Override
+            public void handle() {
+                eventManager.logInfoMessage("Sorting movies in descending order");
+                List<Movie> sorted = movieService.sortMoviesDescending(observableMovies);
+                observableMovies.setAll(sorted);
+                // Updating the nex state to AscendingState
+                MovieSortingContext.this.currentState = new AscendingState();
+            }
+        }
+
+        public void switchOrder() {
+            this.currentState.handle();
+        }
+    }
 }

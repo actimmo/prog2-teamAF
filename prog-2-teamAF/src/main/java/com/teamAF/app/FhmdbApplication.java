@@ -20,7 +20,7 @@ public class FhmdbApplication extends Application {
         // Close the event manager when the application is closed
         stage.setOnCloseRequest(event -> {
             HomeController.eventManager.logInfoMessage("FHMDB Application Closed");
-            HomeController.eventManager.stopEventThread();
+            HomeController.eventManager.stopPipeline();
         });
         stage.show();
     }
