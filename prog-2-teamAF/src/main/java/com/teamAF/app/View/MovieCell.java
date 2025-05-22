@@ -136,19 +136,22 @@ public class MovieCell extends ListCell<Movie> {
             // Watchlist and Remove button logic depending on mode
             if (isWatchlistCell) {
                 removeBtn.setText("Remove");
-                removeBtn.setDisable(false);
+                //removeBtn.setDisable(false);
                 removeBtn.setOnAction(e -> clickHandler.onClick(movie));
             } else {
                 if (addedToWatchlist.contains(movie.getTitle())) {
                     watchlistBtn.setText("Added");
-                    watchlistBtn.setDisable(true);
+                    //watchlistBtn.setDisable(true);
+                    watchlistBtn.setOnAction(e -> {clickHandler.onClick(movie);
+                    });
+
                 } else {
                     watchlistBtn.setText("Watchlist");
-                    watchlistBtn.setDisable(false);
+                    //watchlistBtn.setDisable(false);
                     watchlistBtn.setOnAction(e -> {
                         addedToWatchlist.add(movie.getTitle());
                         watchlistBtn.setText("Added");
-                        watchlistBtn.setDisable(true);
+                        //watchlistBtn.setDisable(true);
                         clickHandler.onClick(movie);
                     });
                 }
