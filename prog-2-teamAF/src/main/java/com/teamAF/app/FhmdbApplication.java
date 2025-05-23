@@ -1,5 +1,6 @@
 package com.teamAF.app;
 
+import com.teamAF.app.Controller.ControllerFactory;
 import com.teamAF.app.Controller.HomeController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +13,11 @@ import java.util.Objects;
 public class FhmdbApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+        // Set up the ControllerFactory
+        ControllerFactory controllerFactory = new ControllerFactory();
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("/home-view.fxml"));
+        fxmlLoader.setControllerFactory(controllerFactory);
+
         Scene scene = new Scene(fxmlLoader.load(), 1000, 700);
         scene.getStylesheets().add(Objects.requireNonNull(FhmdbApplication.class.getResource("/styles.css")).toExternalForm());
         stage.setTitle("FHMDb");
